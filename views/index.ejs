@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>게시판</title>
+    <link rel="stylesheet" href="/index.css">
+</head>
+<body>
+
+<h1>📚 공부 게시판</h1>
+
+<button onclick="location.href='/write'">글 작성</button>
+
+<div class="container">
+    <% posts.forEach(post => { %>
+        <div class="card">
+            <h2><%= post.title %></h2>
+            <p><%= post.content %></p>
+            <span><%= new Date(post.date).toLocaleString() %></span>
+            <br>
+            <a href="/edit/<%= post.post_id %>">수정</a>
+            <a href="/delete/<%= post.post_id %>" onclick="return confirm('삭제할까?')">삭제</a> 
+    <% }) %>
+</div>
+
+</body>
+</html>
