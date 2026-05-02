@@ -7,20 +7,44 @@
 <body>
 
 <h1>📚 공부 게시판</h1>
-
+<% if (!session.user) { %>
+    <a href="/login">로그인</a>
+    <a href="/register">회원가입</a>
+<% } else { %>
+    <span><%= session.user.email %>님</span>
+    <a href="/logout">로그아웃</a>
+<% } %>
 <button onclick="location.href='/write'">글 작성</button>
 
-<div class="container">
-    <% posts.forEach(post => { %>
-        <div class="card">
-            <h2><%= post.title %></h2>
-            <p><%= post.content %></p>
-            <span><%= new Date(post.date).toLocaleString() %></span>
-            <br>
-            <a href="/edit/<%= post.post_id %>">수정</a>
-            <a href="/delete/<%= post.post_id %>" onclick="return confirm('삭제할까?')">삭제</a> 
-    <% }) %>
-</div>
+<table border="1" width="100%">
+    <thead>
+        <tr>
+            <th>번호</th>
+            <th>제목</th>
+            <th>작성자</th>
+            <th>작성일</th>
+            <th>조회수</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        <% posts.forEach(post => { %>
+            <tr>
+                <td><%= post.post_id %></td>
+
+                <td>
+                    <a href="/post/<%= post.post_id %>">
+                        <%= post.title %>
+                    </a>
+                </td>
+
+                <td><%= post.nickName %></td>
+                <td><%= new Date(post.date).toLocaleString() %></td>
+                <td><%= post.views %></td>
+            </tr>
+        <% }) %>
+    </tbody>
+</table>
 
 </body>
 </html>

@@ -1,20 +1,13 @@
-const jwt = require('jsonwebtoken');
-const SECRET = 'mysecretkey';
-
-module.exports = (req, res, next) => {
-  const authHeader = req.headers.authorization;
-
-  if (!authHeader) {
-    return res.status(401).json({ message: '토큰 없음' });
-  }
-
-  const token = authHeader.split(' ')[1]; // Bearer 토큰
-
-  try {
-    const decoded = jwt.verify(token, SECRET);
-    req.user = decoded; // 👈 중요
+exports.isLogin = (req, res, next) => {
+    if (!req.session.user) {
+        return res.send('로그인 필요');
+    }
     next();
-  } catch (err) {
-    return res.status(401).json({ message: '토큰 유효하지 않음' });
-  }
+};
+
+exports.isAdmin = (req, res, next) => {
+    if (req.session.user.role !== 'admin') {
+        return res.send('관리자만 접근 가능');
+    }
+    next();
 };

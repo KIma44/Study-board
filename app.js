@@ -1,13 +1,51 @@
+const mysql = require('mysql2');
 const express = require('express');
+const session = require('express-session'); 
+
 const app = express();
+const path = require('path');
+
+app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.urlencoded({ extended: true }));
+
+//  세션 먼저 등록
+app.use(session({
+    secret: 'secret-key',
+    resave: false,
+    saveUninitialized: true
+}));
+
+//  EJS에서 session 사용 가능하게
+app.use((req, res, next) => {
+    res.locals.session = req.session;
+    next();
+});
+
+// 라우터
+const userRoutes = require('./routes/users');
+app.use('/', userRoutes);
+
+const postRoutes = require('./routes/post');
+app.use('/', postRoutes);
+
+// DB 연결
+const db = mysql.createConnection({
+    host: 'localhost',
+    user: 'root',
+    password: '1q2w3e4r',
+    database: 'study'
+});
+
+db.connect((err) => {
+    if (err) {
+        console.error('DB 연결 실패:', err);
+    } else {
+        console.log('DB 연결 성공');
+    }
+});
 
 app.set('view engine', 'ejs');
-app.use(express.urlencoded({ extended: true }));
-app.use(express.static('public'));
 
-// 라우터 연결
-const postRouter = require('./routes/post');
-app.use('/', postRouter);
 
 app.listen(3000, () => {
     console.log('서버 실행');
