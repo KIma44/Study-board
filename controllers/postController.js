@@ -1,18 +1,68 @@
 const db = require('../config/db');
 
+// ✅ 공통 유효성 검사 함수
+function isValid(value) {
+    return value && value.trim() !== '';
+}
+
 // 메인 (조회)
 exports.getMain = (req, res) => {
-    const sql = `
-        SELECT posts.*, users.nickName 
-        FROM posts 
+    const page = parseInt(req.query.page) || 1;
+    const limit = 10;
+    const offset = (page - 1) * limit;
+
+    const type = req.query.type || 'all';
+    const keyword = req.query.keyword || '';
+
+    let where = '';
+    let params = [];
+
+    if (keyword) {
+        if (type === 'title') {
+            where = "WHERE posts.title LIKE ?";
+            params.push(`%${keyword}%`);
+        } else if (type === 'writer') {
+            where = "WHERE users.nickName LIKE ?";
+            params.push(`%${keyword}%`);
+        } else {
+            where = "WHERE posts.title LIKE ? OR users.nickName LIKE ?";
+            params.push(`%${keyword}%`, `%${keyword}%`);
+        }
+    }
+
+    const countSql = `
+        SELECT COUNT(*) AS total
+        FROM posts
         JOIN users ON posts.user_id = users.user_id
-        ORDER BY post_id DESC
+        ${where}
     `;
 
-    db.query(sql, (err, results) => {
+    db.query(countSql, params, (err, countResult) => {
         if (err) throw err;
 
-        res.render('index', { posts: results });
+        const totalPosts = countResult[0].total;
+        const totalPages = Math.ceil(totalPosts / limit);
+
+        const sql = `
+            SELECT posts.*, users.nickName
+            FROM posts
+            JOIN users ON posts.user_id = users.user_id
+            ${where}
+            ORDER BY post_id DESC
+            LIMIT ? OFFSET ?
+        `;
+
+        db.query(sql, [...params, limit, offset], (err, results) => {
+            if (err) throw err;
+
+            res.render('index', {
+                posts: results,
+                currentPage: page,
+                totalPages: totalPages,
+                type,
+                keyword
+            });
+        });
     });
 };
 
@@ -21,21 +71,28 @@ exports.getWrite = (req, res) => {
     res.render('write');
 };
 
-// 글 저장
+// ✅ 글 작성
 exports.postWrite = (req, res) => {
     const { title, content } = req.body;
 
-    // 로그인 안 했을 때 방지
     if (!req.session.user) {
         return res.send('로그인 필요');
     }
 
+    // ✅ 유효성 검사
+    if (!isValid(title) || !isValid(content)) {
+        return res.send('제목과 내용을 입력하세요');
+    }
+
     const userId = req.session.user.id;
 
-    const sql = 'INSERT INTO posts (title, content, date, user_id) VALUES (?, ?, NOW(), ?)';
+    const sql = 'INSERT INTO posts (title, content, user_id) VALUES (?, ?,  ?)';
 
-    db.query(sql, [title, content, userId], (err) => {
-        if (err) throw err;
+    db.query(sql, [title.trim(), content.trim(), userId], (err) => {
+        if (err) {
+            console.error(err);
+            return res.send('DB 오류');
+        }
 
         res.redirect('/');
     });
@@ -51,7 +108,6 @@ exports.deletePost = (req, res) => {
         const post = results[0];
         const user = req.session.user;
 
-        // 관리자 OR 작성자만 가능
         if (user.role !== 'admin' && user.id !== post.user_id) {
             return res.send('권한 없음');
         }
@@ -75,38 +131,53 @@ exports.getEdit = (req, res) => {
     });
 };
 
-// 수정 처리
+//  수정 처리 (권한 + 유효성 포함)
 exports.postEdit = (req, res) => {
-        console.log('수정 요청 들어옴'); 
-    
     const id = req.params.id;
     const { title, content } = req.body;
 
-    const sql = 'UPDATE posts SET title = ?, content = ? WHERE post_id = ?';
+    if (!req.session.user) {
+        return res.send('로그인 필요');
+    }
 
-    db.query(sql, [title, content, id], (err) => {
+    //  유효성 검사
+    if (!isValid(title) || !isValid(content)) {
+        return res.send('제목과 내용을 입력하세요');
+    }
+
+    //  작성자 or 관리자만 수정 가능
+    db.query('SELECT * FROM posts WHERE post_id = ?', [id], (err, results) => {
         if (err) throw err;
 
-        res.redirect('/');
+        const post = results[0];
+        const user = req.session.user;
+
+        if (user.role !== 'admin' && user.id !== post.user_id) {
+            return res.send('권한 없음');
+        }
+
+        const sql = 'UPDATE posts SET title = ?, content = ? WHERE post_id = ?';
+
+        db.query(sql, [title.trim(), content.trim(), id], (err) => {
+            if (err) {
+                console.error(err);
+                return res.send('DB 오류');
+            }
+
+            res.redirect('/');
+        });
     });
 };
 
-// 상세 조회 
+// 상세 조회
 exports.getDetail = (req, res) => {
     const id = req.params.id;
-
-    console.log('접속한 글 ID:', id);
 
     db.query(
         'UPDATE posts SET views = views + 1 WHERE post_id = ?',
         [id],
-        (err, result) => {
-            if (err) {
-                console.error('조회수 증가 실패:', err);
-                throw err;
-            }
-
-            console.log('조회수 증가 성공:', result);
+        (err) => {
+            if (err) throw err;
 
             const sql = `
                 SELECT posts.*, users.nickName 

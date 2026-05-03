@@ -12,14 +12,20 @@
 
     <div class="info">
         <p>작성자: <%= post.nickName %></p>
-        <p>작성일: <%= new Date(post.date).toLocaleString() %></p>
+        <p>
+            <% if (post.created_at != post.updated_at) { %>
+                수정됨: <%= new Date(post.updated_at).toLocaleString() %>
+            <% } else { %>
+                작성일: <%= new Date(post.created_at).toLocaleString() %>
+            <% } %>
+        </p>        
         <p>조회수: <%= post.views %></p>
     </div>
 
     <hr>
 
     <div class="content">
-       내용: <%= post.content %>
+       <%= post.content %>
     </div>
 
     <hr>

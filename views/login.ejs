@@ -1,17 +1,19 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
-<body>
+    <title>로그인</title>
+<link rel="stylesheet" href="/auth.css">
+
+<form class="auth-box" action="/login" method="POST">
     <h2>로그인</h2>
 
-<form action="/login" method="POST">
-    <input type="email" name="email" placeholder="이메일"><br>
-    <input type="password" name="password" placeholder="비밀번호"><br>
-    <button type="submit">로그인</button>
+    <input type="email" name="email" placeholder="이메일" required>
+    <input type="password" name="password" placeholder="비밀번호" required>
+
+    <button type="submit" class="login-btn">로그인</button>
+
+    <p>계정이 없으신가요? <a href="/register">회원가입</a></p>
 </form>
-</body>
 </html>

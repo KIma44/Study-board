@@ -1,0 +1,76 @@
+/* 전체 화면 중앙 정렬 */
+body {
+    margin: 0;
+    height: 100vh;
+    background: #f5f6f7;
+    font-family: Arial, sans-serif;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* 공통 박스 */
+.auth-box {
+    width: 340px;
+    padding: 40px;
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    text-align: center;
+}
+
+/* 제목 */
+.auth-box h2 {
+    margin-bottom: 25px;
+}
+
+/* 입력창 */
+.auth-box input {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    outline: none;
+}
+
+/* 버튼 */
+.auth-box button {
+    width: 100%;
+    padding: 10px;
+
+    border: none;
+    border-radius: 5px;
+    color: white;
+    cursor: pointer;
+}
+
+/* 로그인 버튼 */
+.login-btn {
+    background: #28a745;
+}
+
+.login-btn:hover {
+    background: #1e7e34;
+}
+
+/* 회원가입 버튼 */
+.register-btn {
+    background: #28a745;
+}
+
+.register-btn:hover {
+    background: #1e7e34;
+}
+
+/* 링크 */
+.auth-box a {
+    color: #007bff;
+    text-decoration: none;
+}
+
+.auth-box a:hover {
+    text-decoration: underline;
+}

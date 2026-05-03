@@ -6,14 +6,33 @@
 </head>
 <body>
 
-<h1>📚 공부 게시판</h1>
-<% if (!session.user) { %>
-    <a href="/login">로그인</a>
-    <a href="/register">회원가입</a>
-<% } else { %>
-    <span><%= session.user.email %>님</span>
-    <a href="/logout">로그아웃</a>
-<% } %>
+<div class="header">
+
+    <h1 class="logo">📚 공부 게시판</h1>
+
+    <div class="user-menu">
+        <% if (!session.user) { %>
+            <a href="/login" class="btn login">로그인</a>
+            <a href="/register" class="btn register">회원가입</a>
+        <% } else { %>
+            <span class="user-info"><%= session.user.email %>님</span>
+            <a href="/logout" class="btn logout">로그아웃</a>
+        <% } %>
+    </div>
+
+</div>
+
+<form method="GET" action="/" class="search-box">
+    <select name="type">
+        <option value="all" <%= type === 'all' ? 'selected' : '' %>>전체</option>
+        <option value="title" <%= type === 'title' ? 'selected' : '' %>>제목</option>
+        <option value="writer" <%= type === 'writer' ? 'selected' : '' %>>작성자</option>
+    </select>
+
+    <input type="text" name="keyword" value="<%= keyword %>" placeholder="검색어 입력">
+
+    <button type="submit">검색</button>
+</form>
 <button onclick="location.href='/write'">글 작성</button>
 
 <table border="1" width="100%">
@@ -28,6 +47,12 @@
     </thead>
 
     <tbody>
+            <% if (posts.length === 0) { %>
+        <tr>
+            <td colspan="5">검색 결과가 없습니다.</td>
+        </tr>
+    <% } %>
+
         <% posts.forEach(post => { %>
             <tr>
                 <td><%= post.post_id %></td>
@@ -39,12 +64,57 @@
                 </td>
 
                 <td><%= post.nickName %></td>
-                <td><%= new Date(post.date).toLocaleString() %></td>
+                <td>
+                    <% if (post.created_at != post.updated_at) { %>
+                        수정됨: <%= new Date(post.updated_at).toLocaleString() %>
+                    <% } else { %>
+                        작성일: <%= new Date(post.created_at).toLocaleString() %>
+                    <% } %>
+                </td>                
                 <td><%= post.views %></td>
             </tr>
         <% }) %>
     </tbody>
 </table>
 
+<!-- 페이지 부분 -->
+<div class="pagination">
+
+    <% 
+    let blockSize = 10;
+    let currentBlock = Math.ceil(currentPage / blockSize);
+
+    let startPage = (currentBlock - 1) * blockSize + 1;
+    let endPage = startPage + blockSize - 1;
+
+    if (endPage > totalPages) {
+        endPage = totalPages;
+    }
+    %>
+
+    <% if (currentPage > 1) { %>
+        <a href="?page=1&type=<%= type %>&keyword=<%= keyword %>">«</a>
+    <% } %>
+
+    <% if (startPage > 1) { %>
+        <a href="?page=<%= startPage - 1 %>&type=<%= type %>&keyword=<%= keyword %>">‹</a>
+    <% } %>
+
+    <% for (let i = startPage; i <= endPage; i++) { %>
+        <a href="?page=<%= i %>&type=<%= type %>&keyword=<%= keyword %>"
+           class="<%= currentPage === i ? 'active' : '' %>">
+            <%= i %>
+        </a>
+    <% } %>
+
+    <% if (endPage < totalPages) { %>
+        <a href="?page=<%= endPage + 1 %>&type=<%= type %>&keyword=<%= keyword %>">›</a>
+    <% } %>
+
+    <% if (currentPage < totalPages) { %>
+        <a href="?page=<%= totalPages %>&type=<%= type %>&keyword=<%= keyword %>">»</a>
+    <% } %>
+
+</div>
 </body>
 </html>

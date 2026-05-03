@@ -1,3 +1,74 @@
+/* 헤더 전체 */
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    padding: 15px 30px;
+    background: #ffffff;
+
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+/* 로고 */
+.logo {
+    margin: 100;
+    font-size: 30px;
+}
+
+/* 오른쪽 메뉴 */
+.user-menu {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+/* 공통 버튼 */
+.btn {
+    padding: 6px 12px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-size: 14px;
+    transition: 0.2s;
+}
+
+/* 로그인 */
+.btn.login {
+    border: 1px solid #4CAF50;
+    color: #4CAF50;
+}
+
+.btn.login:hover {
+    background: #4CAF50;
+    color: white;
+}
+
+/* 회원가입 */
+.btn.register {
+    background: #4CAF50;
+    color: white;
+}
+
+.btn.register:hover {
+    background: #45a049;
+}
+
+/* 로그아웃 */
+.btn.logout {
+    background: #f44336;
+    color: white;
+}
+
+.btn.logout:hover {
+    background: #d32f2f;
+}
+
+/* 사용자 텍스트 */
+.user-info {
+    margin-right: 10px;
+    font-weight: bold;
+}
+
 body {
     font-family: Arial;
     background-color: #f5f5f5;
@@ -24,4 +95,87 @@ button {
     color: white;
     border: none;
     cursor: pointer;
+}
+
+.pagination {
+    margin-top: 20px;
+    text-align: center;
+}
+
+.pagination a {
+    display: inline-block;
+    padding: 8px 12px;
+    margin: 2px;
+    border: 1px solid #ccc;
+    text-decoration: none;
+    color: black;
+}
+
+.pagination a.active {
+    background-color: green;
+    color: white;
+    font-weight: bold;
+}
+
+.pagination a:hover {
+    background-color: #ddd;
+}
+
+
+/* 검색창 전체 */
+.search-box {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+
+    margin: 20px auto;
+    padding: 15px;
+
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+
+    width: fit-content;
+}
+
+/* select */
+.search-box select {
+    padding: 8px 10px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    cursor: pointer;
+}
+
+/* input */
+.search-box input {
+    padding: 8px 12px;
+    width: 200px;
+
+    border-radius: 8px;
+    border: 1px solid #ccc;
+
+    outline: none;
+}
+
+.search-box input:focus {
+    border-color: #4CAF50;
+}
+
+/* 버튼 */
+.search-box button {
+    padding: 8px 15px;
+
+    background-color: #4CAF50;
+    color: white;
+
+    border: none;
+    border-radius: 8px;
+
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.search-box button:hover {
+    background-color: #45a049;
 }
