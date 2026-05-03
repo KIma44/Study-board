@@ -171,26 +171,33 @@ exports.postEdit = (req, res) => {
 
 // 상세 조회
 exports.getDetail = (req, res) => {
-    const id = req.params.id;
+    const postId = req.params.id;
 
-    db.query(
-        'UPDATE posts SET views = views + 1 WHERE post_id = ?',
-        [id],
-        (err) => {
+    const postSql = `
+        SELECT posts.*, users.nickName
+        FROM posts
+        JOIN users ON posts.user_id = users.user_id
+        WHERE post_id = ?
+    `;
+
+    const commentSql = `
+        SELECT comments.*, users.nickName
+        FROM comments
+        JOIN users ON comments.user_id = users.user_id
+        WHERE post_id = ?
+        ORDER BY comment_id DESC
+    `;
+
+    db.query(postSql, [postId], (err, postResult) => {
+        if (err) throw err;
+
+        db.query(commentSql, [postId], (err, commentResult) => {
             if (err) throw err;
 
-            const sql = `
-                SELECT posts.*, users.nickName 
-                FROM posts 
-                JOIN users ON posts.user_id = users.user_id
-                WHERE posts.post_id = ?
-            `;
-
-            db.query(sql, [id], (err, results) => {
-                if (err) throw err;
-
-                res.render('detail', { post: results[0] });
+            res.render('detail', {
+                post: postResult[0],
+                comments: commentResult 
             });
-        }
-    );
+        });
+    });
 };

@@ -22,11 +22,14 @@ app.use((req, res, next) => {
 });
 
 // 라우터
-const userRoutes = require('./routes/users');
+const userRoutes = require('./routes/userRoute');
 app.use('/', userRoutes);
 
-const postRoutes = require('./routes/post');
+const postRoutes = require('./routes/postRoute');
 app.use('/', postRoutes);
+
+const commentRoutes = require('./routes/commentRoute');
+app.use('/', commentRoutes);
 
 // DB 연결
 const db = mysql.createConnection({
