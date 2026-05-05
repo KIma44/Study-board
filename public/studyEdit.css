@@ -1,0 +1,48 @@
+.form-row {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.form-row input {
+    flex: 2;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+}
+
+.form-row select {
+    flex: 1;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+}
+
+/* 버튼 영역 */
+.btn-group {
+    margin-top: 15px;
+    display: flex;
+    gap: 10px;
+}
+
+/* 수정 버튼 */
+.edit-btn {
+    flex: 1;
+    background: #4CAF50;
+    color: white;
+    border: none;
+    padding: 12px;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+/* 취소 버튼 */
+.cancel-btn {
+    flex: 1;
+    text-align: center;
+    padding: 12px;
+    border-radius: 6px;
+    background: #ccc;
+    text-decoration: none;
+    color: black;
+}

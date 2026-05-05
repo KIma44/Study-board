@@ -31,6 +31,9 @@ app.use('/', postRoutes);
 const commentRoutes = require('./routes/commentRoute');
 app.use('/', commentRoutes);
 
+const studyRoues = require('./routes/studyRoute');
+app.use('/', studyRoues);
+
 // DB 연결
 const db = mysql.createConnection({
     host: 'localhost',

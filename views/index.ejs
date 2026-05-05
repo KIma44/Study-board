@@ -10,6 +10,15 @@
 
     <h1 class="logo">📚 공부 게시판</h1>
 
+    <!-- 🔥 메뉴 추가 -->
+    <div class="nav-menu">
+        <a href="/">📝 자유게시판</a>
+        <a href="/study">📘 공부기록</a>
+        <a href="/todo">✅ 할일</a>
+        <a href="/notice">📢 공지사항</a>
+        <a href="/mypage">👤 마이페이지</a>
+    </div>
+
     <div class="user-menu">
         <% if (!session.user) { %>
             <a href="/login" class="btn login">로그인</a>

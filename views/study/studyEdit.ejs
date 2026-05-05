@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>공부 기록 수정</title>
+    <link rel="stylesheet" href="/studyEdit.css">
+</head>
+<body>
+
+<div class="container">
+
+    <!-- 상단 -->
+    <div class="header">
+        <h2>✏ 공부 기록 수정</h2>
+        <a href="/study" class="home-btn">← 목록으로</a>
+    </div>
+
+    <!-- 수정 폼 -->
+    <form action="/study/edit/<%= log.study_log_id %>" method="POST" class="write-form">
+
+        <!-- 제목 -->
+        <input type="text" 
+               name="title" 
+               value="<%= log.title %>" 
+               placeholder="제목" 
+               required>
+
+        <!-- 내용 -->
+        <textarea name="content" placeholder="내용 수정..." required><%= log.content %></textarea>
+
+        <!-- 시간 + 카테고리 -->
+        <div class="form-row">
+            <input type="number" 
+                   name="study_time" 
+                   value="<%= log.study_time %>" 
+                   placeholder="공부 시간(시간)" 
+                   required>
+
+            <select name="category">
+                <option value="개발" <%= log.category === '개발' ? 'selected' : '' %>>개발</option>
+                <option value="자격증" <%= log.category === '자격증' ? 'selected' : '' %>>자격증</option>
+                <option value="학교" <%= log.category === '학교' ? 'selected' : '' %>>학교</option>
+                <option value="기타" <%= log.category === '기타' ? 'selected' : '' %>>기타</option>
+            </select>
+        </div>
+
+        <!-- 버튼 -->
+        <div class="btn-group">
+            <button type="submit" class="edit-btn">수정 완료</button>
+            <a href="/study" class="cancel-btn">취소</a>
+        </div>
+
+    </form>
+
+</div>
+
+</body>
+</html>

@@ -1,0 +1,125 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #eef1f5;
+    margin: 0;
+    padding: 0;
+}
+
+.container {
+    width: 800px;
+    margin: 40px auto;
+}
+
+/* 상단 */
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.home-btn {
+    text-decoration: none;
+    font-size: 14px;
+    color: #3498db;
+}
+
+/* 작성 폼 */
+.write-form {
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    margin-top: 15px;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.05);
+}
+
+.write-form input,
+.write-form textarea,
+.write-form select {
+    width: 100%;
+    margin-bottom: 10px;
+    padding: 10px;
+    border-radius: 6px;
+    border: 1px solid #ddd;
+    font-size: 14px;
+}
+
+.write-form textarea {
+    height: 100px;
+    resize: none;
+}
+
+.form-row {
+    display: flex;
+    gap: 10px;
+}
+
+.form-row input {
+    flex: 1;
+}
+
+.form-row select {
+    width: 150px;
+}
+
+.write-form button {
+    width: 100%;
+    padding: 10px;
+    background: #9b59b6;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.write-form button:hover {
+    background: #8e44ad;
+}
+
+/* 목록 */
+.list {
+    margin-top: 20px;
+}
+
+.log-box {
+    background: white;
+    padding: 15px;
+    border-radius: 10px;
+    margin-bottom: 12px;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.05);
+}
+
+/* 제목 + 시간 */
+.top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.time {
+    font-size: 13px;
+    color: gray;
+}
+
+/* 내용 */
+.content {
+    margin: 10px 0;
+}
+
+/* 하단 */
+.bottom {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    color: gray;
+}
+
+/* 빈 상태 */
+.empty {
+    text-align: center;
+    color: gray;
+}
+
+.writer {
+    font-size: 13px;
+    color: gray;
+}

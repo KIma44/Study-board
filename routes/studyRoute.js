@@ -1,22 +1,13 @@
 const express = require('express');
 const router = express.Router();
 const auth = require('../middleware/auth');
+const studyController = require('../controllers/studyController');
 
-// 공부 기록 생성
-router.post('/', auth, (req, res) => {
-  console.log(req.user); // 👈 여기서 사용자 정보 확인 가능
-  res.json('공부 기록 생성');
-});
-// 전체 조회
-router.get('/', (req, res) => {});
+router.get('/study', studyController.getStudyLogs);
+router.post('/study', studyController.createStudyLog);
+router.get('/study/delete/:id', studyController.deleteStudyLog);
 
-// 상세 조회
-router.get('/:id', (req, res) => {});
-
-// 수정
-router.put('/:id', (req, res) => {});
-
-// 삭제
-router.delete('/:id', (req, res) => {});
+router.get('/study/edit/:id', studyController.getEditPage);
+router.post('/study/edit/:id', studyController.updateStudyLog);
 
 module.exports = router;

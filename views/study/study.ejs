@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>공부 기록</title>
+    <link rel="stylesheet" href="/study.css">
+</head>
+<body>
+
+<div class="container">
+
+    <!-- 상단 -->
+    <div class="header">
+        <h2>📘 공부 기록 게시판</h2>
+        <a href="/" class="home-btn">← 메인으로</a>
+    </div>
+
+    <!-- 작성 폼 -->
+    <form action="/study" method="POST" class="write-form">
+        <input type="text" name="title" placeholder="제목" required>
+
+        <textarea name="content" placeholder="공부 내용 작성..." required></textarea>
+
+        <div class="form-row">
+            <input type="number" name="study_time" placeholder="공부 시간(시간)" required>
+
+            <select name="category">
+                <option value="개발">개발</option>
+                <option value="자격증">자격증</option>
+                <option value="학교">학교</option>
+                <option value="기타">기타</option>
+            </select>
+        </div>
+
+        <button type="submit">작성</button>
+    </form>
+
+    <hr>
+
+    <!-- 목록 -->
+    <div class="list">
+
+        <% if (logs.length === 0) { %>
+            <p class="empty">작성된 기록이 없습니다.</p>
+        <% } %>
+
+        <% logs.forEach(log => { %>
+            <div class="log-box">
+        <div class="top">
+    <h3><%= log.title %></h3>
+    <span class="writer">👤 <%= log.nickName %></span>
+</div>
+
+                <p class="content"><%= log.content %></p>
+
+                <div class="bottom">
+
+    <span class="category">📂 <%= log.category %></span>
+    <span class="time">⏱ <%= log.study_time %>시간</span>
+
+    <span class="date">
+        <% 
+            const time = (log.updated_at && log.updated_at != log.created_at) 
+                ? log.updated_at 
+                : log.created_at;
+        %>
+        <%= new Date(time).toLocaleString() %>
+    </span>
+
+    <% if (session.user && (session.user.id === log.user_id || session.user.role === 'admin')) { %>
+        
+        <% if (session.user.id === log.user_id) { %>
+            <a href="/study/edit/<%= log.study_log_id %>">수정</a>
+        <% } %>
+
+        <a href="/study/delete/<%= log.study_log_id %>"
+           onclick="return confirm('삭제할까요?')">삭제</a>
+
+    <% } %>
+
+</div>
+            </div>
+        <% }) %>
+
+    </div>
+
+</div>
+
+</body>
+</html>

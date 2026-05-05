@@ -47,13 +47,18 @@
 
         <p><%= comment.content %></p>
 
-        <% if (session.user && session.user.id === comment.user_id) { %>
-            <a href="/comment/edit/<%= comment.comment_id %>">수정</a>
-            <a href="/comment/delete/<%= comment.comment_id %>"
-               onclick="return confirm('삭제할까요?')">
-                삭제
-            </a>
-        <% } %>
+  <% if (session.user && 
+      (session.user.id === comment.user_id || session.user.role === 'admin')) { %>
+
+    <% if (session.user.id === comment.user_id) { %>
+        <a href="/comment/edit/<%= comment.comment_id %>">수정</a>
+    <% } %>
+
+    <a href="/comment/delete/<%= comment.comment_id %>"
+       onclick="return confirm('삭제할까요?')">
+        삭제
+    </a>
+<% } %>
 
         <p class="date">
             <% if (comment.updated_at && comment.updated_at != comment.created_at) { %>
