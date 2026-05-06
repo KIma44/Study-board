@@ -46,8 +46,13 @@
         <% logs.forEach(log => { %>
             <div class="log-box">
         <div class="top">
+
     <h3><%= log.title %></h3>
-    <span class="writer">👤 <%= log.nickName %></span>
+
+    <a href="/study/detail/<%= log.study_log_id %>" class="writer">
+        👤 <%= log.nickName %>
+    </a>
+
 </div>
 
                 <p class="content"><%= log.content %></p>

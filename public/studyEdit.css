@@ -1,3 +1,66 @@
+/* 전체 배경 */
+body {
+    margin: 0;
+    font-family: 'Segoe UI', sans-serif;
+    background: #f5f7fb;
+}
+
+/* 컨테이너 */
+.container {
+    width: 500px;
+    margin: 60px auto;
+    background: white;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+}
+
+/* 상단 */
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.header h2 {
+    margin: 0;
+}
+
+.home-btn {
+    text-decoration: none;
+    color: #555;
+    font-size: 14px;
+}
+
+/* 입력 폼 */
+.write-form input,
+.write-form textarea,
+.write-form select {
+    width: 100%;
+    padding: 12px;
+    margin-top: 10px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 14px;
+    transition: 0.2s;
+}
+
+/* 포커스 효과 */
+.write-form input:focus,
+.write-form textarea:focus,
+.write-form select:focus {
+    border-color: #4CAF50;
+    outline: none;
+}
+
+/* textarea */
+textarea {
+    resize: none;
+    height: 120px;
+}
+
+/* 시간 + 카테고리 */
 .form-row {
     display: flex;
     gap: 10px;
@@ -6,21 +69,15 @@
 
 .form-row input {
     flex: 2;
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 6px;
 }
 
 .form-row select {
     flex: 1;
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 6px;
 }
 
 /* 버튼 영역 */
 .btn-group {
-    margin-top: 15px;
+    margin-top: 20px;
     display: flex;
     gap: 10px;
 }
@@ -28,12 +85,19 @@
 /* 수정 버튼 */
 .edit-btn {
     flex: 1;
-    background: #4CAF50;
+    background: linear-gradient(135deg, #4CAF50, #45a049);
     color: white;
     border: none;
     padding: 12px;
-    border-radius: 6px;
+    border-radius: 8px;
+    font-weight: bold;
     cursor: pointer;
+    transition: 0.2s;
+}
+
+.edit-btn:hover {
+    opacity: 0.9;
+    transform: translateY(-1px);
 }
 
 /* 취소 버튼 */
@@ -41,8 +105,13 @@
     flex: 1;
     text-align: center;
     padding: 12px;
-    border-radius: 6px;
-    background: #ccc;
+    border-radius: 8px;
+    background: #e0e0e0;
     text-decoration: none;
-    color: black;
+    color: #333;
+    transition: 0.2s;
+}
+
+.cancel-btn:hover {
+    background: #d5d5d5;
 }

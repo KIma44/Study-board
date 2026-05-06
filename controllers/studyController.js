@@ -106,3 +106,27 @@ exports.updateStudyLog = (req, res) => {
         }
     );
 };
+
+exports.getDetail = (req, res) => {
+    const id = req.params.id;
+
+    const studySql = `SELECT * FROM study_logs WHERE study_log_id = ?`;
+    const todoSql = `SELECT * FROM todos WHERE study_log_id = ?`;
+
+    db.query(studySql, [id], (err, studyResult) => {
+        if (err) return res.send("DB 오류");
+
+        if (!studyResult[0]) {
+            return res.send("글 없음");
+        }
+
+        db.query(todoSql, [id], (err, todoResult) => {
+            if (err) return res.send("TODO 오류");
+
+            res.render('study/studyDetail', {
+                post: studyResult[0],
+                todos: todoResult
+            });
+        });
+    });
+};

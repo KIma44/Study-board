@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>TODO 리스트</title>
+    <link rel="stylesheet" href="/todo.css">
+</head>
+<body>
+
+<div class="container">
+
+    <div class="header">
+        <h2>📋 TODO 리스트</h2>
+        <a href="/study" class="back">← 목록으로</a>
+    </div>
+
+    <!-- 추가 -->
+    <form class="todo-form" action="/todo/add" method="POST">
+        <input type="hidden" name="study_log_id" value="<%= study_log_id %>">
+        <input type="text" name="content" placeholder="할 일을 입력하세요" required>
+        <button>추가</button>
+    </form>
+
+    <ul class="todo-list">
+
+    <% if (todos.length === 0) { %>
+        <div class="empty">할 일이 없습니다 😴</div>
+    <% } %>
+
+    <% todos.forEach(function(todo) { %>
+
+<% if (!todo || !todo.todo_id) return; %>
+
+<li class="todo-item">
+
+    <div class="left">
+        <form action="/todo/toggle/<%= todo.todo_id %>" method="POST">
+            <button type="submit">
+                <%= todo.is_completed ? '✅' : '⬜' %>
+            </button>
+        </form>
+
+        <span><%= todo.content %></span>
+
+        <span class="date">
+            <%= new Date(todo.updated_at || todo.created_at).toLocaleString() %>
+        </span>
+    </div>
+
+    <div class="right">
+        <form action="/todo/update/<%= todo.todo_id %>" method="POST">
+            <input type="text" name="content" value="<%= todo.content %>">
+            <button type="submit">수정</button>
+        </form>
+
+        <form action="/todo/delete/<%= todo.todo_id %>" method="POST">
+            <button type="submit">삭제</button>
+        </form>
+    </div>
+
+</li>
+
+<% }) %>
+
+    </ul>
+
+</div>
+
+</body>
+</html>

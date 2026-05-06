@@ -1,13 +1,23 @@
 const express = require('express');
 const router = express.Router();
-const auth = require('../middleware/auth');
 const studyController = require('../controllers/studyController');
 
-router.get('/study', studyController.getStudyLogs);
-router.post('/study', studyController.createStudyLog);
-router.get('/study/delete/:id', studyController.deleteStudyLog);
+// 목록
+router.get('/', studyController.getStudyLogs);
 
-router.get('/study/edit/:id', studyController.getEditPage);
-router.post('/study/edit/:id', studyController.updateStudyLog);
+// 작성
+router.post('/', studyController.createStudyLog);
+
+// 삭제
+router.get('/delete/:id', studyController.deleteStudyLog);
+
+// 수정 페이지
+router.get('/edit/:id', studyController.getEditPage);
+
+// 수정 처리
+router.post('/edit/:id', studyController.updateStudyLog);
+
+// 상세
+router.get('/detail/:id', studyController.getDetail);
 
 module.exports = router;

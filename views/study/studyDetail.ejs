@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>공부 기록 상세</title>
+
+<link rel="stylesheet" href="/studyDetail.css">
+</head>
+<body>
+
+<div class="container">
+
+    <!-- 게시글 -->
+    <div class="title"><%= post.title %></div>
+
+    <div class="info">
+        작성자: <%= post.nickName %> |
+        작성일: <%= new Date(post.created_at).toLocaleString() %>
+    </div>
+
+    <div class="content">
+        <%= post.content %>
+    </div>
+
+    <!-- TODO -->
+    <div class="todo-section">
+        <h3>📋 TODO 리스트</h3>
+
+        <form class="todo-form" action="/todo/add" method="POST">
+            <input type="hidden" name="study_log_id" value="<%= post.study_log_id %>">
+
+            <input type="text" name="content" placeholder="할 일을 입력하세요">
+            <button>추가</button>
+        </form>
+
+        <ul>
+        <% if (todos.length === 0) { %>
+            <div class="empty">할 일이 없습니다.</div>
+        <% } %>
+
+        <% todos.forEach(todo => { %>
+            <li>
+                <div class="todo-left">
+                    <form action="/todo/toggle/<%= todo.todo_id %>" method="POST">
+                        <button>
+                            <%= todo.is_completed ? '✅' : '⬜' %>
+                        </button>
+                    </form>
+
+                    <span class="<%= todo.is_completed ? 'done' : '' %>">
+                        <%= todo.content %>
+                    </span>
+                </div>
+            </li>
+        <% }) %>
+        </ul>
+    </div>
+    <div class="container">
+
+    <!--  뒤로가기 -->
+    <div class="back">
+        <a href="/study">← 목록으로</a>
+    </div>
+
+</div>
+
+</body>
+</html>

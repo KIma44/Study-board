@@ -32,7 +32,10 @@ const commentRoutes = require('./routes/commentRoute');
 app.use('/', commentRoutes);
 
 const studyRoues = require('./routes/studyRoute');
-app.use('/', studyRoues);
+app.use('/study', studyRoues);
+
+const todoRoutes = require('./routes/todoRoute');
+app.use('/todo', todoRoutes);
 
 // DB 연결
 const db = mysql.createConnection({
