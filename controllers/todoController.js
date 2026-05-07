@@ -15,7 +15,11 @@ exports.getTodo = (req, res) => {
     `;
 
     db.query(sql, [id, userId], (err, result) => {
-        if (err) return res.send("DB 오류");
+
+        if (err) {
+            console.log(err);
+            return res.send("DB 오류");
+        }
 
         res.render('todo/todo', {
             todos: result,
@@ -27,6 +31,8 @@ exports.getTodo = (req, res) => {
 // 전체 TODO
 exports.getAllTodo = (req, res) => {
     const userId = req.session.user?.id;
+
+    if (!userId) return res.send("로그인 필요");
 
     const sql = `
         SELECT 
@@ -41,7 +47,11 @@ exports.getAllTodo = (req, res) => {
     `;
 
     db.query(sql, [userId], (err, result) => {
-        if (err) return res.send("DB 오류");
+
+        if (err) {
+            console.log(err);
+            return res.send("DB 오류");
+        }
 
         res.render('todo/todo', {
             todos: result,
@@ -62,32 +72,67 @@ exports.addTodo = (req, res) => {
         VALUES (?, ?, ?)
     `;
 
-    db.query(sql, [content, userId, study_log_id || null], () => {
-        res.redirect('back'); // 🔥 핵심
-    });
+    db.query(
+        sql,
+        [content, userId, study_log_id || null],
+        (err) => {
+
+            if (err) {
+                console.log(err);
+                return res.send("DB 오류");
+            }
+
+            res.redirect(req.get('Referer'));
+        }
+    );
 };
 
 // 체크
 exports.toggleTodo = (req, res) => {
     const id = req.params.id;
+    const userId = req.session.user?.id;
+
+    if (!userId) return res.send("로그인 필요");
 
     const sql = `
         UPDATE todos 
         SET is_completed = NOT is_completed
         WHERE todo_id = ?
+        AND user_id = ?
     `;
 
-    db.query(sql, [id], () => {
-        res.redirect('back');
+    db.query(sql, [id, userId], (err) => {
+
+        if (err) {
+            console.log(err);
+            return res.send("DB 오류");
+        }
+
+        res.redirect(req.get('Referer'));
     });
 };
 
 // 삭제
 exports.deleteTodo = (req, res) => {
     const id = req.params.id;
+    const userId = req.session.user?.id;
 
-    db.query(`DELETE FROM todos WHERE todo_id = ?`, [id], () => {
-        res.redirect('back');
+    if (!userId) return res.send("로그인 필요");
+
+    const sql = `
+        DELETE FROM todos
+        WHERE todo_id = ?
+        AND user_id = ?
+    `;
+
+    db.query(sql, [id, userId], (err) => {
+
+        if (err) {
+            console.log(err);
+            return res.send("DB 오류");
+        }
+
+        res.redirect(req.get('Referer'));
     });
 };
 
@@ -95,14 +140,24 @@ exports.deleteTodo = (req, res) => {
 exports.updateTodo = (req, res) => {
     const id = req.params.id;
     const { content } = req.body;
+    const userId = req.session.user?.id;
+
+    if (!userId) return res.send("로그인 필요");
 
     const sql = `
-    UPDATE todos 
-    SET content = ?, updated_at = NOW()
-    WHERE todo_id = ?
+        UPDATE todos 
+        SET content = ?, updated_at = NOW()
+        WHERE todo_id = ?
+        AND user_id = ?
     `;
 
-    db.query(sql, [content, id], () => {
-        res.redirect('back');
+    db.query(sql, [content, id, userId], (err) => {
+
+        if (err) {
+            console.log(err);
+            return res.send("DB 오류");
+        }
+
+        res.redirect(req.get('Referer'));
     });
 };

@@ -49,9 +49,20 @@
 
     <h3><%= log.title %></h3>
 
-    <a href="/study/detail/<%= log.study_log_id %>" class="writer">
-        👤 <%= log.nickName %>
+    
+    <% if (session.user && session.user.id === log.user_id) { %>
+
+    <a href="/study/detail/<%= log.study_log_id %>">
+       👤 <%= log.nickName %>
     </a>
+
+<% } else { %>
+
+    <span class="disabled-user">
+        <%= log.nickName %>
+    </span>
+
+<% } %>
 
 </div>
 

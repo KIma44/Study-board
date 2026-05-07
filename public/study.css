@@ -123,3 +123,9 @@ body {
     font-size: 13px;
     color: gray;
 }
+
+.disabled-user{
+    color: gray;
+    cursor: not-allowed;
+    text-decoration: none;
+}

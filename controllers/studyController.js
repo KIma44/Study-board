@@ -109,23 +109,49 @@ exports.updateStudyLog = (req, res) => {
 
 exports.getDetail = (req, res) => {
     const id = req.params.id;
+    const userId = req.session.user?.id;
 
-    const studySql = `SELECT * FROM study_logs WHERE study_log_id = ?`;
-    const todoSql = `SELECT * FROM todos WHERE study_log_id = ?`;
+    if (!userId) {
+        return res.send("로그인 필요");
+    }
 
-    db.query(studySql, [id], (err, studyResult) => {
-        if (err) return res.send("DB 오류");
+    const sql = `
+    SELECT *
+    FROM study_logs
+    WHERE study_log_id = ?
+    AND user_id = ?
+    `;
 
-        if (!studyResult[0]) {
-            return res.send("글 없음");
+    db.query(sql, [id, userId], (err, result) => {
+
+        if (err) {
+            console.log(err);
+            return res.send("DB 오류");
         }
 
-        db.query(todoSql, [id], (err, todoResult) => {
-            if (err) return res.send("TODO 오류");
+        if (result.length === 0) {
+            return res.send("본인 게시글만 접근 가능합니다.");
+        }
+
+        // TODO 조회
+        const todoSql = `
+        SELECT *
+        FROM todos
+        WHERE study_log_id = ?
+        AND user_id = ?
+        ORDER BY todo_id DESC
+        `;
+
+        db.query(todoSql, [id, userId], (todoErr, todos) => {
+
+            if (todoErr) {
+                console.log(todoErr);
+                return res.send("TODO DB 오류");
+            }
 
             res.render('study/studyDetail', {
-                post: studyResult[0],
-                todos: todoResult
+                post: result[0],
+                todos: todos
             });
         });
     });
