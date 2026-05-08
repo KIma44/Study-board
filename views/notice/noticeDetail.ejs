@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h1><%= notice.title %></h1>
+
+<p>
+    작성일 :
+    <%= new Date(notice.created_at).toLocaleString() %>
+</p>
+
+<hr>
+
+<div>
+    <%= notice.content %>
+</div>
+
+<hr>
+
+<a href="/notice/edit/<%= notice.notice_id %>">수정</a>
+
+<a href="/notice/delete/<%= notice.notice_id %>"
+   onclick="return confirm('삭제할까요?')">
+   삭제
+</a>
+</body>
+</html>

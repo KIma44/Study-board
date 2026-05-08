@@ -37,6 +37,9 @@ app.use('/study', studyRoues);
 const todoRoutes = require('./routes/todoRoute');
 app.use('/todo', todoRoutes);
 
+const noticeRouter = require('./routes/noticeRoute');
+app.use('/notice', noticeRouter);
+
 // DB 연결
 const db = mysql.createConnection({
     host: 'localhost',

@@ -1,4 +1,7 @@
 const express = require('express');
 const router = express.Router();
-const auth = require('../middleware/auth');
-const studyController = require('../controllers/noticeController');
+const noticeController = require('../controllers/noticeController');
+
+router.get('/', noticeController.noticeList);
+
+module.exports = router;
