@@ -6,6 +6,7 @@ const app = express();
 const path = require('path');
 
 app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, 'public/notice')));
 app.use(express.urlencoded({ extended: true }));
 
 //  세션 먼저 등록

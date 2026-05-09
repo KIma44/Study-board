@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>공지 수정</title>
+
+    <link rel="stylesheet" href="/noticeEdit.css">
+
+</head>
+<body>
+
+<div class="container">
+
+    <div class="edit-card">
+
+        <div class="edit-header">
+
+            <h1>
+                ✏️ 공지 수정
+            </h1>
+
+            <p>
+                공지사항 내용을 수정할 수 있습니다.
+            </p>
+
+        </div>
+
+        <form
+            action="/notice/edit/<%= notice.notice_id %>"
+            method="POST"
+            class="edit-form"
+        >
+
+            <div class="input-group">
+
+                <label>제목</label>
+
+                <input
+                    type="text"
+                    name="title"
+                    value="<%= notice.title %>"
+                    required
+                >
+
+            </div>
+
+            <div class="input-group">
+
+                <label>내용</label>
+
+                <textarea
+                    name="content"
+                    rows="12"
+                    required
+                ><%= notice.content %></textarea>
+
+            </div>
+
+            <div class="edit-buttons">
+
+                <button type="submit" class="save-btn">
+                    수정 완료
+                </button>
+
+                <a
+                    href="/notice/<%= notice.notice_id %>"
+                    class="cancel-btn"
+                >
+                    취소
+                </a>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+</body>
+</html>

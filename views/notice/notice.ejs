@@ -1,29 +1,82 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>공지사항</title>
+
+    <link rel="stylesheet" href="/notice.css">
+
 </head>
 <body>
-    <h1>📢 공지사항</h1>
 
-<a href="/notice/write">공지 작성</a>
+<div class="container">
 
-<% notices.forEach(notice => { %>
+    <div class="header">
 
-<div class="notice-box">
+    <div class="header-left">
 
-    <a href="/notice/<%= notice.notice_id %>">
-        <%= notice.title %>
-    </a>
+        <a href="/" class="back-btn">
+            ← 뒤로가기
+        </a>
 
-    <span>
-        <%= new Date(notice.created_at).toLocaleString() %>
-    </span>
+        <h1>📢 공지사항</h1>
+
+    </div>
+
+    <!-- 관리자만 보이게 -->
+    <% if (session.user && session.user.role === 'admin') { %>
+
+        <a href="/notice/write" class="write-btn">
+            공지 작성
+        </a>
+
+    <% } %>
 
 </div>
 
-<% }) %>
+
+    <div class="notice-list">
+
+        <% if (notices.length === 0) { %>
+
+            <div class="empty">
+                등록된 공지사항이 없습니다.
+            </div>
+
+        <% } %>
+
+
+        <% notices.forEach(notice => { %>
+
+        <div class="notice-box">
+
+            <div class="notice-left">
+
+                <a
+                    href="/notice/<%= notice.notice_id %>"
+                    class="notice-title"
+                >
+                    <%= notice.title %>
+                </a>
+
+                <p class="notice-content">
+                    <%= notice.content %>
+                </p>
+
+            </div>
+
+            <span class="notice-date">
+                <%= new Date(notice.created_at).toLocaleString() %>
+            </span>
+
+        </div>
+
+        <% }) %>
+
+    </div>
+
+</div>
+
 </body>
 </html>

@@ -1,31 +1,105 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>공지 상세</title>
+
+    <link rel="stylesheet" href="/noticeDetail.css">
+
 </head>
 <body>
-    <h1><%= notice.title %></h1>
 
-<p>
-    작성일 :
-    <%= new Date(notice.created_at).toLocaleString() %>
-</p>
+<div class="container">
 
-<hr>
+    <div class="detail-card">
 
-<div>
-    <%= notice.content %>
+        <div class="notice-badge">
+            📢 공지사항
+        </div>
+
+        <h1 class="detail-title">
+            <%= notice.title %>
+        </h1>
+
+        <div class="detail-top">
+
+            <div class="writer">
+
+                <div class="writer-circle">
+                    <%= notice.nickName[0] %>
+                </div>
+
+                <div class="writer-info">
+
+                    <div class="writer-name">
+                        <%= notice.nickName %>
+                    </div>
+
+                    <div class="writer-role">
+                        관리자
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="detail-date">
+
+    <% if (
+        notice.updated_at &&
+        new Date(notice.created_at).getTime() !==
+        new Date(notice.updated_at).getTime()
+    ) { %>
+
+        수정일 :
+        <%= new Date(notice.updated_at).toLocaleString() %>
+
+    <% } else { %>
+
+        작성일 :
+        <%= new Date(notice.created_at).toLocaleString() %>
+
+    <% } %>
+
 </div>
 
-<hr>
+        </div>
 
-<a href="/notice/edit/<%= notice.notice_id %>">수정</a>
+        <div class="detail-content">
+            <%= notice.content %>
+        </div>
 
-<a href="/notice/delete/<%= notice.notice_id %>"
-   onclick="return confirm('삭제할까요?')">
-   삭제
-</a>
+        <div class="button-group">
+
+            <a href="/notice" class="btn back-btn">
+                목록으로
+            </a>
+
+            <% if (session.user && session.user.role === 'admin') { %>
+
+                <a
+                    href="/notice/edit/<%= notice.notice_id %>"
+                    class="btn edit-btn"
+                >
+                    수정
+                </a>
+
+                <a
+                    href="/notice/delete/<%= notice.notice_id %>"
+                    class="btn delete-btn"
+                    onclick="return confirm('삭제하시겠습니까?')"
+                >
+                    삭제
+                </a>
+
+            <% } %>
+
+        </div>
+
+    </div>
+
+</div>
+
 </body>
 </html>

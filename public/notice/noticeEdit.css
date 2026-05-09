@@ -1,0 +1,120 @@
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+body{
+    background:#f4f6f9;
+    font-family:'Malgun Gothic', sans-serif;
+}
+
+.container{
+    width:90%;
+    max-width:900px;
+    margin:50px auto;
+}
+
+.edit-card{
+    background:white;
+    padding:40px;
+    border-radius:20px;
+    box-shadow:0 5px 20px rgba(0,0,0,0.08);
+}
+
+.edit-header{
+    margin-bottom:35px;
+}
+
+.edit-header h1{
+    font-size:34px;
+    color:#222;
+    margin-bottom:10px;
+}
+
+.edit-header p{
+    color:#888;
+    font-size:15px;
+}
+
+.edit-form{
+    display:flex;
+    flex-direction:column;
+    gap:25px;
+}
+
+.input-group{
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+}
+
+.input-group label{
+    font-size:15px;
+    font-weight:600;
+    color:#444;
+}
+
+.input-group input{
+    height:55px;
+    border:1px solid #ddd;
+    border-radius:12px;
+    padding:0 18px;
+    font-size:16px;
+    outline:none;
+    transition:0.2s;
+}
+
+.input-group textarea{
+    border:1px solid #ddd;
+    border-radius:12px;
+    padding:18px;
+    font-size:16px;
+    outline:none;
+    resize:none;
+    line-height:1.7;
+    transition:0.2s;
+}
+
+.input-group input:focus,
+.input-group textarea:focus{
+    border-color:#007bff;
+    box-shadow:0 0 0 4px rgba(0,123,255,0.1);
+}
+
+.edit-buttons{
+    display:flex;
+    gap:15px;
+    margin-top:10px;
+}
+
+.save-btn{
+    border:none;
+    background:#007bff;
+    color:white;
+    padding:14px 24px;
+    border-radius:12px;
+    font-size:15px;
+    font-weight:600;
+    cursor:pointer;
+    transition:0.2s;
+}
+
+.save-btn:hover{
+    background:#0056b3;
+}
+
+.cancel-btn{
+    text-decoration:none;
+    background:#f1f3f5;
+    color:#333;
+    padding:14px 24px;
+    border-radius:12px;
+    font-size:15px;
+    font-weight:600;
+    transition:0.2s;
+}
+
+.cancel-btn:hover{
+    background:#ddd;
+}
