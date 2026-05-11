@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>마이페이지</title>
+
+    <link rel="stylesheet" href="/myPage.css">
+</head>
+<body>
+
+<div class="container">
+
+    <h1>🙋 마이페이지</h1>
+
+    <div class="card">
+
+        <div class="info">
+    <span>이메일</span>
+    <p><%= user.email %></p>
+</div>
+
+<div class="info">
+    <span>닉네임</span>
+    <p><%= user.nickName %></p>
+</div>
+
+<div class="info">
+    <span>권한</span>
+    <p><%= user.role %></p>
+</div>
+
+<div class="info">
+    <span>가입일</span>
+    <p> <%= user.created_at.toLocaleString('ko-KR') %></p>
+</div>
+
+    </div>
+
+    <div class="btn-box">
+        <a href="/">메인으로</a>
+    </div>
+
+</div>
+
+</body>
+</html>

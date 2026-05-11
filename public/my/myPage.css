@@ -1,0 +1,53 @@
+body{
+    margin:0;
+    padding:0;
+    background:#f4f6f9;
+    font-family:'맑은 고딕';
+}
+
+.container{
+    width:500px;
+    margin:60px auto;
+}
+
+h1{
+    text-align:center;
+    margin-bottom:30px;
+    color:#333;
+}
+
+.card{
+    background:white;
+    padding:30px;
+    border-radius:15px;
+    box-shadow:0 4px 10px rgba(0,0,0,0.1);
+}
+
+.info{
+    margin-bottom:25px;
+}
+
+.info span{
+    font-weight:bold;
+    color:#666;
+}
+
+.info p{
+    margin-top:8px;
+    padding:12px;
+    background:#f8f9fa;
+    border-radius:8px;
+}
+
+.btn-box{
+    margin-top:20px;
+    text-align:center;
+}
+
+.btn-box a{
+    text-decoration:none;
+    background:#4f46e5;
+    color:white;
+    padding:12px 20px;
+    border-radius:8px;
+}

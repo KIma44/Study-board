@@ -7,6 +7,8 @@ const path = require('path');
 
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.static(path.join(__dirname, 'public/notice')));
+app.use(express.static(path.join(__dirname, 'public/my')));
+
 app.use(express.urlencoded({ extended: true }));
 
 //  세션 먼저 등록
@@ -40,6 +42,11 @@ app.use('/todo', todoRoutes);
 
 const noticeRouter = require('./routes/noticeRoute');
 app.use('/notice', noticeRouter);
+
+const myPageRouter = require('./routes/myPageRoute');
+app.use('/myPage', myPageRouter);
+
+
 
 // DB 연결
 const db = mysql.createConnection({
