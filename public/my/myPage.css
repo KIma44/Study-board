@@ -2,52 +2,142 @@ body{
     margin:0;
     padding:0;
     background:#f4f6f9;
-    font-family:'맑은 고딕';
+    font-family:Arial, sans-serif;
 }
 
 .container{
-    width:500px;
-    margin:60px auto;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    min-height:100vh;
 }
 
-h1{
+.mypage-card{
+    width:420px;
+    background:white;
+    padding:40px;
+    border-radius:20px;
+    box-shadow:0 5px 15px rgba(0,0,0,0.1);
+}
+
+.mypage-card h1{
     text-align:center;
     margin-bottom:30px;
-    color:#333;
 }
 
-.card{
-    background:white;
-    padding:30px;
-    border-radius:15px;
-    box-shadow:0 4px 10px rgba(0,0,0,0.1);
+.profile-form{
+    text-align:center;
+    margin-bottom:30px;
+}
+
+.profile-image-box{
+    margin-bottom:15px;
+}
+
+.profile-image{
+    width:130px;
+    height:130px;
+    border-radius:50%;
+    object-fit:cover;
+    border:4px solid #ddd;
+}
+
+.file-input{
+    margin-top:10px;
+}
+
+.profile-btn{
+    margin-top:15px;
+    padding:10px 20px;
+    border:none;
+    border-radius:10px;
+    background:#4f46e5;
+    color:white;
+    cursor:pointer;
+}
+
+.profile-btn:hover{
+    background:#4338ca;
+}
+
+.info-box{
+    margin-top:20px;
 }
 
 .info{
-    margin-bottom:25px;
+    margin-bottom:20px;
+    padding-bottom:10px;
+    border-bottom:1px solid #eee;
 }
 
 .info span{
-    font-weight:bold;
-    color:#666;
+    display:block;
+    font-size:14px;
+    color:gray;
+    margin-bottom:5px;
 }
 
 .info p{
-    margin-top:8px;
-    padding:12px;
-    background:#f8f9fa;
-    border-radius:8px;
+    margin:0;
+    font-size:17px;
+    font-weight:bold;
 }
 
-.btn-box{
-    margin-top:20px;
-    text-align:center;
+.btn-group{
+    display:flex;
+    justify-content:space-between;
+    margin-top:30px;
 }
 
-.btn-box a{
+.home-btn,
+.logout-btn{
     text-decoration:none;
-    background:#4f46e5;
+    padding:10px 25px;
+    border-radius:10px;
     color:white;
-    padding:12px 20px;
-    border-radius:8px;
+}
+
+.home-btn{
+    background:#10b981;
+}
+
+.logout-btn{
+    background:#ef4444;
+}
+
+.edit-form{
+    margin-top:30px;
+}
+
+.input-group{
+    margin-bottom:20px;
+}
+
+.input-group label{
+    display:block;
+    margin-bottom:8px;
+    font-weight:bold;
+}
+
+.input-group input{
+    width:100%;
+    padding:12px;
+    border:1px solid #ddd;
+    border-radius:10px;
+    box-sizing:border-box;
+}
+
+.save-btn{
+    width:100%;
+    padding:14px;
+    border:none;
+    border-radius:10px;
+    background:#2563eb;
+    color:white;
+    font-size:16px;
+    cursor:pointer;
+}
+
+.save-btn:hover{
+    background:#1d4ed8;
 }

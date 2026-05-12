@@ -24,7 +24,14 @@
             <a href="/login" class="btn login">로그인</a>
             <a href="/register" class="btn register">회원가입</a>
         <% } else { %>
-            <span class="user-info"><%= session.user.email %>님</span>
+            <a href="/myPage" class="profile-link">
+
+                <img 
+                    src="<%= session.user.profile_image %>" 
+                    class="header-profile"
+                >
+
+            </a>
             <a href="/logout" class="btn logout">로그아웃</a>
         <% } %>
     </div>

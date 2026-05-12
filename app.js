@@ -44,8 +44,11 @@ const noticeRouter = require('./routes/noticeRoute');
 app.use('/notice', noticeRouter);
 
 const myPageRouter = require('./routes/myPageRoute');
-app.use('/myPage', myPageRouter);
+app.use('/', myPageRouter);
 
+
+// 이미지 파일 
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 
 // DB 연결

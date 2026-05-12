@@ -255,3 +255,17 @@ button {
 .user-info {
     font-size: 13px;
 }
+
+
+.profile-link{
+    display:flex;
+    align-items:center;
+}
+
+.header-profile{
+    width:45px;
+    height:45px;
+    border-radius:50%;
+    object-fit:cover;
+    border:2px solid white;
+}

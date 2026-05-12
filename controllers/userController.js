@@ -23,10 +23,12 @@ exports.postLogin = (req, res) => {
         }
 
         req.session.user = {
-            id: user.user_id,
-            email: user.email,
-            role: user.role
-        };
+    id: user.user_id,
+    email: user.email,
+    role: user.role,
+    nickName: user.nickName,
+    profile_image: user.profile_image
+};
 
         res.redirect('/');
     });
