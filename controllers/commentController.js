@@ -8,7 +8,7 @@ exports.addComment = (req, res) => {
         return res.send("<script>alert('로그인 필요'); location.href='/login';</script>");
     }
 
-    const userId = req.session.user.id;
+    const userId = req.session.user.user_id;
     const postId = req.body.post_id;
     const content = req.body.content;
 
@@ -66,8 +66,7 @@ exports.postEditComment = (req, res) => {
 
     const commentId = req.params.id;
     const content = req.body.content;
-    const userId = req.session.user.id;
-
+    const userId = req.session.user.user_id;
     const sql = "SELECT * FROM comments WHERE comment_id = ?";
 
     db.query(sql, [commentId], (err, result) => {
@@ -97,8 +96,7 @@ exports.postEditComment = (req, res) => {
 exports.deleteComment = (req, res) => {
 
     const commentId = req.params.id;
-    const userId = req.session.user.id;
-
+    const userId = req.session.user.user_id;
     const sql = "SELECT * FROM comments WHERE comment_id = ?";
 
     db.query(sql, [commentId], (err, result) => {

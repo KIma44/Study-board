@@ -75,7 +75,8 @@ exports.noticeWrite = (req, res) => {
 
     const { title, content } = req.body;
 
-    const user_id = req.session.user.id;
+    // 수정된 부분
+    const user_id = req.session.user.user_id;
 
     const sql = `
     INSERT INTO notices
@@ -83,7 +84,7 @@ exports.noticeWrite = (req, res) => {
     VALUES (?, ?, ?)
     `;
 
-    db.query(sql, [title, content, user_id], (err, result) => {
+    db.query(sql, [title, content, user_id], (err) => {
 
         if (err) throw err;
 
@@ -127,7 +128,7 @@ exports.noticeEdit = (req, res) => {
     WHERE notice_id = ?
     `;
 
-    db.query(sql, [title, content, notice_id], (err, result) => {
+    db.query(sql, [title, content, notice_id], (err) => {
 
         if (err) throw err;
 
@@ -146,7 +147,7 @@ exports.noticeDelete = (req, res) => {
     WHERE notice_id = ?
     `;
 
-    db.query(sql, [notice_id], (err, result) => {
+    db.query(sql, [notice_id], (err) => {
 
         if (err) throw err;
 

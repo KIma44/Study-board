@@ -44,13 +44,23 @@ exports.getMain = (req, res) => {
         const totalPages = Math.ceil(totalPosts / limit);
 
         const sql = `
-            SELECT posts.*, users.nickName
-            FROM posts
-            JOIN users ON posts.user_id = users.user_id
-            ${where}
-            ORDER BY post_id DESC
-            LIMIT ? OFFSET ?
-        `;
+                    SELECT
+                        posts.*,
+                        users.user_id,
+                        users.nickName,
+                        users.profile_image
+
+                    FROM posts
+
+                    JOIN users
+                    ON posts.user_id = users.user_id
+
+                    ${where}
+
+                    ORDER BY post_id DESC
+
+                    LIMIT ? OFFSET ?
+                `;
 
         db.query(sql, [...params, limit, offset], (err, results) => {
             if (err) throw err;
@@ -84,8 +94,8 @@ exports.postWrite = (req, res) => {
         return res.send('제목과 내용을 입력하세요');
     }
 
-    const userId = req.session.user.id;
-
+    const userId = req.session.user.user_id;
+    
     const sql = 'INSERT INTO posts (title, content, user_id) VALUES (?, ?,  ?)';
 
     db.query(sql, [title.trim(), content.trim(), userId], (err) => {

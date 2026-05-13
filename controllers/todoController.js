@@ -2,10 +2,14 @@ const db = require('../config/db');
 
 // TODO 목록 (특정 글)
 exports.getTodo = (req, res) => {
-    const id = req.params.id;
-    const userId = req.session.user?.id;
 
-    if (!userId) return res.send("로그인 필요");
+    const id = req.params.id;
+
+    const userId = req.session.user?.user_id;
+
+    if (!userId) {
+        return res.send("로그인 필요");
+    }
 
     const sql = `
     SELECT * FROM todos 
@@ -28,11 +32,15 @@ exports.getTodo = (req, res) => {
     });
 };
 
+
 // 전체 TODO
 exports.getAllTodo = (req, res) => {
-    const userId = req.session.user?.id;
 
-    if (!userId) return res.send("로그인 필요");
+    const userId = req.session.user?.user_id;
+
+    if (!userId) {
+        return res.send("로그인 필요");
+    }
 
     const sql = `
         SELECT 
@@ -60,12 +68,17 @@ exports.getAllTodo = (req, res) => {
     });
 };
 
+
 // 추가
 exports.addTodo = (req, res) => {
-    const { content, study_log_id } = req.body;
-    const userId = req.session.user?.id;
 
-    if (!userId) return res.send("로그인 필요");
+    const { content, study_log_id } = req.body;
+
+    const userId = req.session.user?.user_id;
+
+    if (!userId) {
+        return res.send("로그인 필요");
+    }
 
     const sql = `
         INSERT INTO todos (content, user_id, study_log_id)
@@ -87,12 +100,17 @@ exports.addTodo = (req, res) => {
     );
 };
 
+
 // 체크
 exports.toggleTodo = (req, res) => {
-    const id = req.params.id;
-    const userId = req.session.user?.id;
 
-    if (!userId) return res.send("로그인 필요");
+    const id = req.params.id;
+
+    const userId = req.session.user?.user_id;
+
+    if (!userId) {
+        return res.send("로그인 필요");
+    }
 
     const sql = `
         UPDATE todos 
@@ -112,12 +130,17 @@ exports.toggleTodo = (req, res) => {
     });
 };
 
+
 // 삭제
 exports.deleteTodo = (req, res) => {
-    const id = req.params.id;
-    const userId = req.session.user?.id;
 
-    if (!userId) return res.send("로그인 필요");
+    const id = req.params.id;
+
+    const userId = req.session.user?.user_id;
+
+    if (!userId) {
+        return res.send("로그인 필요");
+    }
 
     const sql = `
         DELETE FROM todos
@@ -136,13 +159,19 @@ exports.deleteTodo = (req, res) => {
     });
 };
 
+
 // 수정
 exports.updateTodo = (req, res) => {
-    const id = req.params.id;
-    const { content } = req.body;
-    const userId = req.session.user?.id;
 
-    if (!userId) return res.send("로그인 필요");
+    const id = req.params.id;
+
+    const { content } = req.body;
+
+    const userId = req.session.user?.user_id;
+
+    if (!userId) {
+        return res.send("로그인 필요");
+    }
 
     const sql = `
         UPDATE todos 

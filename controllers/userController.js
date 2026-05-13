@@ -23,12 +23,12 @@ exports.postLogin = (req, res) => {
         }
 
         req.session.user = {
-    id: user.user_id,
-    email: user.email,
-    role: user.role,
-    nickName: user.nickName,
-    profile_image: user.profile_image
-};
+            user_id: user.user_id,
+            email: user.email,
+            nickName: user.nickName,
+            profile_image: user.profile_image,
+            role: user.role
+        };
 
         res.redirect('/');
     });
@@ -56,4 +56,86 @@ exports.postRegister = (req, res) => {
 exports.logout = (req, res) => {
     req.session.destroy();
     res.redirect('/');
+};
+
+exports.getProfile = (req, res) => {
+
+    const userId = req.params.id;
+
+    const sql = `
+        SELECT *
+        FROM users
+        WHERE user_id = ?
+    `;
+
+    db.query(sql, [userId], (err, results) => {
+
+        if (err) throw err;
+
+        if (results.length === 0) {
+            return res.send('유저 없음');
+        }
+
+        res.render('user/profile', {
+            user: results[0]
+        });
+
+    });
+};
+
+exports.updateProfile = (req, res) => {
+
+    if (!req.session.user) {
+        return res.redirect('/login');
+    }
+
+    const userId = req.session.user.user_id;
+    
+    if (!req.file) {
+        return res.redirect('/profile/' + userId);
+    }
+
+    const profilePath = '/uploads/' + req.file.filename;
+
+    const sql = `
+        UPDATE users
+        SET profile_image = ?
+        WHERE user_id = ?
+    `;
+
+    db.query(sql, [profilePath, userId], (err) => {
+
+        if (err) throw err;
+
+        req.session.user.profile_image = profilePath;
+
+        res.redirect('/profile/' + userId);
+    });
+};
+
+exports.updateUser = (req, res) => {
+
+    if (!req.session.user) {
+        return res.redirect('/login');
+    }
+
+    const userId = req.session.user.user_id;
+
+    const { email, nickName } = req.body;
+
+    const sql = `
+        UPDATE users
+        SET email = ?, nickName = ?
+        WHERE user_id = ?
+    `;
+
+    db.query(sql, [email, nickName, userId], (err) => {
+
+        if (err) throw err;
+
+        req.session.user.email = email;
+        req.session.user.nickName = nickName;
+
+        res.redirect('/profile/' + userId);
+    });
 };

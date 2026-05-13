@@ -10,7 +10,7 @@
 
     <h1 class="logo">📚 공부 게시판</h1>
 
-    <!-- 🔥 메뉴 추가 -->
+    <!--  메뉴 추가 -->
     <div class="nav-menu">
         <a href="/">📝 자유게시판</a>
         <a href="/study">📘 공부기록</a>
@@ -24,14 +24,12 @@
             <a href="/login" class="btn login">로그인</a>
             <a href="/register" class="btn register">회원가입</a>
         <% } else { %>
-            <a href="/myPage" class="profile-link">
-
-                <img 
-                    src="<%= session.user.profile_image %>" 
-                    class="header-profile"
-                >
-
-            </a>
+            <a href="/profile/<%= session.user.user_id %>" class="profile-link">
+    <img 
+        src="<%= session.user.profile_image %>" 
+        class="header-profile"
+    >
+</a>
             <a href="/logout" class="btn logout">로그아웃</a>
         <% } %>
     </div>

@@ -1,111 +1,11 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>마이페이지</title>
-
-    <link rel="stylesheet" href="/myPage.css">
 </head>
 <body>
-
-<div class="container">
-
-    <div class="mypage-card">
-
-        <h1>👤 마이페이지</h1>
-
-        <!-- 프로필 수정 -->
-        <form 
-            action="/profile/update" 
-            method="POST" 
-            enctype="multipart/form-data"
-            class="profile-form"
-        >
-
-            <div class="profile-image-box">
-
-                <img 
-                    src="<%= user.profile_image || '/default-profile.png' %>" 
-                    alt="프로필"
-                    class="profile-image"
-                >
-
-            </div>
-
-            <input 
-                type="file" 
-                name="profile"
-                class="file-input"
-            >
-
-            <button type="submit" class="profile-btn">
-                프로필 사진 변경
-            </button>
-
-        </form>
-
-        <!-- 회원 정보 수정 -->
-        <form 
-            action="/myPage/update" 
-            method="POST"
-            class="edit-form"
-        >
-
-            <div class="input-group">
-                <label>이메일</label>
-
-                <input 
-                    type="email"
-                    name="email"
-                    value="<%= user.email %>"
-                    required
-                >
-            </div>
-
-            <div class="input-group">
-                <label>닉네임</label>
-
-                <input 
-                    type="text"
-                    name="nickName"
-                    value="<%= user.nickName %>"
-                    required
-                >
-            </div>
-
-            <div class="input-group">
-                <label>가입일</label>
-
-                <input 
-                    type="text"
-                    value="<%= user.created_at ? user.created_at.toLocaleString('ko-KR') : '가입일 없음' %>"
-                    readonly
-                >
-            </div>
-
-            <button type="submit" class="save-btn">
-                회원정보 수정
-            </button>
-
-        </form>
-
-        <!-- 버튼 -->
-        <div class="btn-group">
-
-            <a href="/" class="home-btn">
-                홈으로
-            </a>
-
-            <a href="/logout" class="logout-btn">
-                로그아웃
-            </a>
-
-        </div>
-
-    </div>
-
-</div>
-
+    
 </body>
 </html>
