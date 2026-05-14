@@ -1,10 +1,10 @@
 const express = require('express');
+
 const router = express.Router();
 
 const mypageController = require('../controllers/mypageController');
 
-router.get('/myPage', mypageController.myPage);
-
-
+// 마이페이지
+router.get('/myPage', mypageController.getMyPage);
 
 module.exports = router;

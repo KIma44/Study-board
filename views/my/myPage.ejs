@@ -1,11 +1,175 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>마이페이지</title>
+
+    <link rel="stylesheet" href="/myPage.css">
 </head>
 <body>
-    
+
+<div class="container">
+
+    <!-- 상단 -->
+    <div class="top-bar">
+
+        <button onclick="history.back()" class="back-btn">
+            ← 뒤로가기
+        </button>
+
+    </div>
+
+    <!-- 프로필 -->
+    <div class="profile-card">
+
+        <h1>👤 마이페이지</h1>
+
+        <div class="profile-info">
+
+            <p>
+                <strong>이메일 :</strong>
+                <%= user.email %>
+            </p>
+
+            <p>
+                <strong>가입일 :</strong>
+
+                <% if(user.created_at) { %>
+
+                    <%= new Date(user.created_at)
+                    .toLocaleDateString('ko-KR') %>
+
+                <% } else { %>
+
+                    가입일 없음
+
+                <% } %>
+
+            </p>
+
+        </div>
+
+    </div>
+
+    <!-- 활동 요약 -->
+    <div class="summary">
+
+        <div class="summary-card">
+            <h3>📝 자유게시판</h3>
+            <p><%= freeCount %>개 작성</p>
+        </div>
+
+        <div class="summary-card">
+            <h3>📘 공부게시판</h3>
+            <p><%= studyCount %>개 작성</p>
+        </div>
+
+        <div class="summary-card">
+            <h3>📋 TODO</h3>
+            <p><%= todoCount %>개</p>
+        </div>
+
+    </div>
+
+    <!-- 내가 작성한 글 -->
+    <div class="post-section">
+
+        <div class="section-header">
+            <h2>✍ 내가 작성한 글</h2>
+        </div>
+
+        <% if(posts.length === 0) { %>
+
+            <div class="empty">
+                작성한 글이 없습니다.
+            </div>
+
+        <% } else { %>
+
+            <table>
+
+                <thead>
+                <tr>
+                    <th>게시판</th>
+                    <th>제목</th>
+                    <th>작성일</th>
+                </tr>
+                </thead>
+
+                <tbody>
+
+                <% posts.forEach(post => { %>
+
+                    <tr>
+
+                        <td>
+
+                            <% if(post.type === 'free') { %>
+
+                                📝 자유게시판
+
+                            <% } else { %>
+
+                                📘 공부게시판
+
+                            <% } %>
+
+                        </td>
+
+                        <td class="title">
+
+                            <a href="<%= post.url %>">
+                                <%= post.title %>
+                            </a>
+
+                        </td>
+
+                        <td>
+
+                            <% if(post.created_at) { %>
+
+                                <%= new Date(post.created_at)
+                                .toLocaleString('ko-KR') %>
+
+                            <% } else { %>
+
+                                날짜 없음
+
+                            <% } %>
+
+                        </td>
+
+                    </tr>
+
+                <% }) %>
+
+                </tbody>
+
+            </table>
+
+        <% } %>
+
+    </div>
+
+    <!-- 메뉴 -->
+    <div class="bottom-menu">
+
+        <a href="/" class="btn">
+            🏠 자유게시판
+        </a>
+
+        <a href="/study" class="btn">
+            📘 공부게시판
+        </a>
+
+        <a href="/logout" class="btn logout">
+            🚪 로그아웃
+        </a>
+
+    </div>
+
+</div>
+
 </body>
 </html>

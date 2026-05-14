@@ -27,7 +27,8 @@ exports.postLogin = (req, res) => {
             email: user.email,
             nickName: user.nickName,
             profile_image: user.profile_image,
-            role: user.role
+            role: user.role,
+            created_at: user.created_at
         };
 
         res.redirect('/');
