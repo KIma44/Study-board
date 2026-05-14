@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>공부 기록 작성</title>
+
+    <link rel="stylesheet" href="/studyWrite.css">
+</head>
+<body>
+
+<div class="container">
+
+    <div class="header">
+        <h2>✏ 공부 기록 작성</h2>
+
+        <a href="/study" class="back-btn">
+            ← 목록으로
+        </a>
+    </div>
+
+    <form action="/study" method="POST" class="write-form">
+
+        <!-- 제목 -->
+        <input
+            type="text"
+            name="title"
+            placeholder="제목"
+            required
+        >
+
+        <!-- 내용 -->
+        <textarea
+            name="content"
+            placeholder="공부 내용을 작성하세요"
+            required
+        ></textarea>
+
+        <!-- 시간 + 카테고리 -->
+        <div class="form-row">
+
+            <input
+                type="number"
+                name="study_time"
+                placeholder="공부 시간"
+                required
+            >
+
+            <select name="category">
+                <option value="개발">개발</option>
+                <option value="자격증">자격증</option>
+                <option value="학교">학교</option>
+                <option value="기타">기타</option>
+            </select>
+
+        </div>
+
+        <!-- TODO -->
+        <input
+            type="text"
+            name="todo_content"
+            placeholder="TODO 입력"
+        >
+
+        <!-- 버튼 -->
+        <button type="submit">
+            작성 완료
+        </button>
+
+    </form>
+
+</div>
+
+</body>
+</html>

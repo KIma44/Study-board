@@ -8,25 +8,75 @@ exports.createStudyLog = (req, res) => {
         return res.send("로그인 후 이용하세요");
     }
 
-    const { title, content, study_time, category } = req.body;
+    const {
+        title,
+        content,
+        study_time,
+        category,
+        todo_content
+    } = req.body;
 
-    // 수정 완료
     const user_id = req.session.user.user_id;
 
+    // study 저장
     const sql = `
         INSERT INTO study_logs 
-        (user_id, title, content, study_time, category, created_at, updated_at)
+        (
+            user_id,
+            title,
+            content,
+            study_time,
+            category,
+            created_at,
+            updated_at
+        )
         VALUES (?, ?, ?, ?, ?, NOW(), NOW())
     `;
 
     db.query(
         sql,
         [user_id, title, content, study_time, category],
-        (err) => {
+        (err, result) => {
 
-            if (err) throw err;
+            if (err) {
+                console.log(err);
+                return res.send("DB 오류");
+            }
 
-            res.redirect('/study');
+            // 생성된 study id
+            const studyLogId = result.insertId;
+
+            // todo 입력 안했으면 종료
+            if (!todo_content || todo_content.trim() === '') {
+                return res.redirect('/study');
+            }
+
+            // todo 저장
+            const todoSql = `
+                INSERT INTO todos
+                (
+                    content,
+                    user_id,
+                    study_log_id,
+                    created_at,
+                    updated_at
+                )
+                VALUES (?, ?, ?, NOW(), NOW())
+            `;
+
+            db.query(
+                todoSql,
+                [todo_content, user_id, studyLogId],
+                (todoErr) => {
+
+                    if (todoErr) {
+                        console.log(todoErr);
+                        return res.send("TODO 저장 오류");
+                    }
+
+                    res.redirect('/study');
+                }
+            );
         }
     );
 };
@@ -258,4 +308,14 @@ exports.getDetail = (req, res) => {
             });
         });
     });
+};
+
+// 작성 페이지
+exports.getWritePage = (req, res) => {
+
+    if (!req.session.user) {
+        return res.send("로그인 필요");
+    }
+
+    res.render('study/studyWrite');
 };

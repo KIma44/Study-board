@@ -20,4 +20,6 @@ router.post('/edit/:id', studyController.updateStudyLog);
 // 상세
 router.get('/detail/:id', studyController.getDetail);
 
+router.get('/write', studyController.getWritePage);
+
 module.exports = router;

@@ -5,9 +5,11 @@ const session = require('express-session');
 const app = express();
 const path = require('path');
 
+// css관리
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.static(path.join(__dirname, 'public/notice')));
 app.use(express.static(path.join(__dirname, 'public/my')));
+app.use(express.static(path.join(__dirname, 'public/study')));
 
 app.use(express.urlencoded({ extended: true }));
 
