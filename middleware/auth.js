@@ -1,6 +1,10 @@
 exports.isLogin = (req, res, next) => {
     if (!req.session.user) {
-        return res.send('로그인 필요');
+        
+    if (!req.session.user) {
+        return res.redirect('/login?error=login');
+    }
+
     }
     next();
 };

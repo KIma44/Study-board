@@ -5,7 +5,7 @@ exports.createStudyLog = (req, res) => {
 
     // 로그인 체크
     if (!req.session.user) {
-        return res.send("로그인 후 이용하세요");
+        return res.redirect('/login?error=login');
     }
 
     const {
@@ -20,7 +20,7 @@ exports.createStudyLog = (req, res) => {
 
     // study 저장
     const sql = `
-        INSERT INTO study_logs 
+        INSERT INTO study_logs
         (
             user_id,
             title,
@@ -43,15 +43,14 @@ exports.createStudyLog = (req, res) => {
                 return res.send("DB 오류");
             }
 
-            // 생성된 study id
             const studyLogId = result.insertId;
 
-            // todo 입력 안했으면 종료
+            // TODO 없으면 종료
             if (!todo_content || todo_content.trim() === '') {
                 return res.redirect('/study');
             }
 
-            // todo 저장
+            // TODO 저장
             const todoSql = `
                 INSERT INTO todos
                 (
@@ -87,7 +86,7 @@ exports.getStudyLogs = (req, res) => {
     const sql = `
         SELECT study_logs.*, users.nickName
         FROM study_logs
-        JOIN users 
+        JOIN users
         ON study_logs.user_id = users.user_id
         ORDER BY study_log_id DESC
     `;
@@ -110,7 +109,7 @@ exports.deleteStudyLog = (req, res) => {
 
     // 로그인 체크
     if (!req.session.user) {
-        return res.send("로그인 필요");
+        return res.redirect('/login?error=login');
     }
 
     const user = req.session.user;
@@ -131,7 +130,7 @@ exports.deleteStudyLog = (req, res) => {
             return res.send("글 없음");
         }
 
-        // 수정 완료
+        // 권한 체크
         if (
             user.user_id !== log.user_id &&
             user.role !== 'admin'
@@ -155,8 +154,9 @@ exports.deleteStudyLog = (req, res) => {
 // 수정 페이지
 exports.getEditPage = (req, res) => {
 
+    // 로그인 체크
     if (!req.session.user) {
-        return res.send("로그인 필요");
+        return res.redirect('/login?error=login');
     }
 
     const id = req.params.id;
@@ -192,8 +192,9 @@ exports.getEditPage = (req, res) => {
 // 수정 처리
 exports.updateStudyLog = (req, res) => {
 
+    // 로그인 체크
     if (!req.session.user) {
-        return res.send("로그인 필요");
+        return res.redirect('/login?error=login');
     }
 
     const id = req.params.id;
@@ -205,7 +206,6 @@ exports.updateStudyLog = (req, res) => {
         category
     } = req.body;
 
-    // 먼저 게시글 조회
     db.query(
         "SELECT * FROM study_logs WHERE study_log_id = ?",
         [id],
@@ -229,8 +229,8 @@ exports.updateStudyLog = (req, res) => {
 
             db.query(
                 `
-                UPDATE study_logs 
-                SET 
+                UPDATE study_logs
+                SET
                     title = ?,
                     content = ?,
                     study_time = ?,
@@ -261,11 +261,11 @@ exports.getDetail = (req, res) => {
 
     const id = req.params.id;
 
-    // 수정 완료
+    // 로그인 체크
     const userId = req.session.user?.user_id;
 
     if (!userId) {
-        return res.send("로그인 필요");
+        return res.redirect('/login?error=login');
     }
 
     const sql = `
@@ -313,9 +313,12 @@ exports.getDetail = (req, res) => {
 // 작성 페이지
 exports.getWritePage = (req, res) => {
 
-    if (!req.session.user) {
-        return res.send("로그인 필요");
+    const userId = req.session.user?.user_id;
+
+    if (!userId) {
+        return res.redirect('/login?error=login');
     }
 
     res.render('study/studyWrite');
 };
+

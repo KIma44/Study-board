@@ -1,35 +1,56 @@
 const db = require('../config/db');
 
-// TODO 목록 (특정 글)
+// 특정 공부 TODO
 exports.getTodo = (req, res) => {
 
-    const id = req.params.id;
-
+    const study_log_id = req.params.id;
     const userId = req.session.user?.user_id;
 
+    // 로그인 체크
     if (!userId) {
-        return res.send("로그인 필요");
+        return res.redirect('/login?error=login');
     }
 
-    const sql = `
-    SELECT * FROM todos 
-    WHERE study_log_id = ? 
-    AND user_id = ?
-    ORDER BY todo_id DESC
+    // 공부 제목 가져오기
+    const studySql = `
+        SELECT title
+        FROM study_logs
+        WHERE study_log_id = ?
     `;
 
-    db.query(sql, [id, userId], (err, result) => {
+    // TODO 가져오기
+    const todoSql = `
+        SELECT *
+        FROM todos
+        WHERE study_log_id = ?
+        AND user_id = ?
+        ORDER BY todo_id DESC
+    `;
+
+    db.query(studySql, [study_log_id], (err, studyResult) => {
 
         if (err) {
             console.log(err);
             return res.send("DB 오류");
         }
 
-        res.render('todo/todo', {
-            todos: result,
-            study_log_id: id
+        db.query(todoSql, [study_log_id, userId], (err, todos) => {
+
+            if (err) {
+                console.log(err);
+                return res.send("DB 오류");
+            }
+
+            res.render('todo/todo', {
+                todos,
+                study_log_id,
+                studyTitle: studyResult[0]?.title || '제목 없음'
+            });
+
         });
+
     });
+
 };
 
 
@@ -38,20 +59,24 @@ exports.getAllTodo = (req, res) => {
 
     const userId = req.session.user?.user_id;
 
+    // 로그인 체크
     if (!userId) {
-        return res.send("로그인 필요");
+        return res.redirect('/login?error=login');
     }
 
     const sql = `
-        SELECT 
-            todo_id,
-            content,
-            is_completed,
-            created_at,
-            updated_at
-        FROM todos
-        WHERE user_id = ?
-        ORDER BY todo_id DESC
+        SELECT
+            t.todo_id,
+            t.content,
+            t.is_completed,
+            t.created_at,
+            t.updated_at,
+            s.title AS study_title
+        FROM todos t
+        LEFT JOIN study_logs s
+        ON t.study_log_id = s.study_log_id
+        WHERE t.user_id = ?
+        ORDER BY t.todo_id DESC
     `;
 
     db.query(sql, [userId], (err, result) => {
@@ -63,26 +88,37 @@ exports.getAllTodo = (req, res) => {
 
         res.render('todo/todo', {
             todos: result,
-            study_log_id: null
+            study_log_id: null,
+            studyTitle: '전체 TODO'
         });
+
     });
+
 };
 
 
-// 추가
+// TODO 추가
 exports.addTodo = (req, res) => {
 
     const { content, study_log_id } = req.body;
 
     const userId = req.session.user?.user_id;
 
+    // 로그인 체크
     if (!userId) {
-        return res.send("로그인 필요");
+        return res.redirect('/login?error=login');
     }
 
     const sql = `
-        INSERT INTO todos (content, user_id, study_log_id)
-        VALUES (?, ?, ?)
+        INSERT INTO todos 
+        (
+            content,
+            user_id,
+            study_log_id,
+            created_at,
+            updated_at
+        )
+        VALUES (?, ?, ?, NOW(), NOW())
     `;
 
     db.query(
@@ -101,20 +137,23 @@ exports.addTodo = (req, res) => {
 };
 
 
-// 체크
+// 체크 토글
 exports.toggleTodo = (req, res) => {
 
     const id = req.params.id;
 
     const userId = req.session.user?.user_id;
 
+    // 로그인 체크
     if (!userId) {
-        return res.send("로그인 필요");
+        return res.redirect('/login?error=login');
     }
 
     const sql = `
-        UPDATE todos 
-        SET is_completed = NOT is_completed
+        UPDATE todos
+        SET 
+            is_completed = NOT is_completed,
+            updated_at = NOW()
         WHERE todo_id = ?
         AND user_id = ?
     `;
@@ -128,6 +167,7 @@ exports.toggleTodo = (req, res) => {
 
         res.redirect(req.get('Referer'));
     });
+
 };
 
 
@@ -138,8 +178,9 @@ exports.deleteTodo = (req, res) => {
 
     const userId = req.session.user?.user_id;
 
+    // 로그인 체크
     if (!userId) {
-        return res.send("로그인 필요");
+        return res.redirect('/login?error=login');
     }
 
     const sql = `
@@ -157,6 +198,7 @@ exports.deleteTodo = (req, res) => {
 
         res.redirect(req.get('Referer'));
     });
+
 };
 
 
@@ -169,13 +211,16 @@ exports.updateTodo = (req, res) => {
 
     const userId = req.session.user?.user_id;
 
+    // 로그인 체크
     if (!userId) {
-        return res.send("로그인 필요");
+        return res.redirect('/login?error=login');
     }
 
     const sql = `
-        UPDATE todos 
-        SET content = ?, updated_at = NOW()
+        UPDATE todos
+        SET 
+            content = ?,
+            updated_at = NOW()
         WHERE todo_id = ?
         AND user_id = ?
     `;
@@ -189,4 +234,5 @@ exports.updateTodo = (req, res) => {
 
         res.redirect(req.get('Referer'));
     });
+
 };

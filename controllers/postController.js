@@ -77,8 +77,12 @@ exports.getMain = (req, res) => {
 };
 
 // 글 작성 페이지
-exports.getWrite = (req, res) => {
-    res.render('write');
+exports.getWrite = (req, res) => { 
+    const userId = req.session.user?.user_id; 
+    if (!userId) { return res.redirect('/login?error=login'); 
+
+    } 
+    res.render('write'); 
 };
 
 // ✅ 글 작성
@@ -86,10 +90,15 @@ exports.postWrite = (req, res) => {
     const { title, content } = req.body;
 
     if (!req.session.user) {
-        return res.send('로그인 필요');
+        ```js id="7l14wj"
+if (!req.session.user) {
+    return res.redirect('/login?error=login');
+}
+```
+
     }
 
-    // ✅ 유효성 검사
+    // 유효성 검사
     if (!isValid(title) || !isValid(content)) {
         return res.send('제목과 내용을 입력하세요');
     }
@@ -132,14 +141,27 @@ exports.deletePost = (req, res) => {
 
 // 수정 페이지
 exports.getEdit = (req, res) => {
+
+    const userId = req.session.user?.user_id;
+
+    if (!userId) {
+        return res.redirect('/login?error=login');
+    }
+
     const id = req.params.id;
 
     db.query('SELECT * FROM posts WHERE post_id = ?', [id], (err, results) => {
+
         if (err) throw err;
 
-        res.render('edit', { post: results[0] });
+        res.render('edit', {
+            post: results[0]
+        });
+
     });
+
 };
+
 
 //  수정 처리 (권한 + 유효성 포함)
 exports.postEdit = (req, res) => {
@@ -147,7 +169,12 @@ exports.postEdit = (req, res) => {
     const { title, content } = req.body;
 
     if (!req.session.user) {
-        return res.send('로그인 필요');
+ 
+    if (!req.session.user) {
+        return res.redirect('/login?error=login');
+    }
+
+
     }
 
     //  유효성 검사

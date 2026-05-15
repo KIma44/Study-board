@@ -244,3 +244,30 @@ body{
         flex:1;
     }
 }
+
+.study-title{
+    margin: 15px 0;
+    padding: 12px;
+    background: #f5f7ff;
+    border-left: 5px solid #4f46e5;
+    border-radius: 8px;
+    font-weight: bold;
+    color: #333;
+}
+
+.todo-content{
+    display:flex;
+    flex-direction:column;
+    gap:5px;
+}
+
+.study-name{
+    font-size:13px;
+    color:#4f46e5;
+    font-weight:bold;
+}
+
+.content{
+    font-size:16px;
+}
+

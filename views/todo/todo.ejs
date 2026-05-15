@@ -14,6 +14,11 @@
         <a href="/study" class="back">← 목록으로</a>
     </div>
 
+    <!-- 현재 공부 제목 -->
+    <div class="study-title">
+        📘 공부 제목 : <%= studyTitle %>
+    </div>
+
     <!-- 추가 -->
     <form class="todo-form" action="/todo/add" method="POST">
         <input type="hidden" name="study_log_id" value="<%= study_log_id %>">
@@ -29,7 +34,7 @@
 
     <% todos.forEach(function(todo) { %>
 
-<% if (!todo || !todo.todo_id) return; %>
+    <% if (!todo || !todo.todo_id) return; %>
 
 <li class="todo-item">
 
@@ -40,7 +45,19 @@
             </button>
         </form>
 
-        <span><%= todo.content %></span>
+
+        <div class="todo-content">
+
+            <div class="study-name">
+                📘 <%= todo.study_title || '일반 TODO' %>
+            </div>
+
+            <span class="content">
+                <%= todo.content %>
+            </span>
+
+        </div>
+
 
         <span class="date">
             <%= new Date(todo.updated_at || todo.created_at).toLocaleString() %>
