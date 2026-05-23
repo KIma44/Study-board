@@ -1,25 +1,30 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>글 작성</title>
     <link rel="stylesheet" href="/write.css">
-
 </head>
 <body>
-    <div class="form-container">
+
+<div class="form-container">
+
     <h1>글 작성</h1>
 
-    <form action="/write" method="post">
-        <input type="text" name="title" placeholder="제목">
+    <!-- 🚨 반드시 /post/write -->
+    <form action="/post/write" method="post">
 
-        <textarea name="content" placeholder="내용"></textarea>
+        <input type="text" name="title" placeholder="제목" required>
+
+        <textarea name="content" placeholder="내용" required></textarea>
 
         <button type="submit">등록</button>
+
     </form>
 
-    <a href="/" class="back-btn">← 목록으로</a>
+    <a href="/post">← 목록으로</a>
+
 </div>
+
 </body>
 </html>

@@ -6,7 +6,6 @@
     <title>공지 상세</title>
 
     <link rel="stylesheet" href="/noticeDetail.css">
-
 </head>
 <body>
 
@@ -46,23 +45,23 @@
 
             <div class="detail-date">
 
-    <% if (
-        notice.updated_at &&
-        new Date(notice.created_at).getTime() !==
-        new Date(notice.updated_at).getTime()
-    ) { %>
+                <% if (
+                    notice.updated_at &&
+                    new Date(notice.created_at).getTime() !==
+                    new Date(notice.updated_at).getTime()
+                ) { %>
 
-        수정일 :
-        <%= new Date(notice.updated_at).toLocaleString() %>
+                    수정일 :
+                    <%= new Date(notice.updated_at).toLocaleString('ko-KR') %>
 
-    <% } else { %>
+                <% } else { %>
 
-        작성일 :
-        <%= new Date(notice.created_at).toLocaleString() %>
+                    작성일 :
+                    <%= new Date(notice.created_at).toLocaleString('ko-KR') %>
 
-    <% } %>
+                <% } %>
 
-</div>
+            </div>
 
         </div>
 
@@ -76,7 +75,8 @@
                 목록으로
             </a>
 
-            <% if (session.user && session.user.role === 'admin') { %>
+            <!-- JWT 관리자 체크 -->
+            <% if (typeof loginUser !== 'undefined' && loginUser && loginUser.role === 'admin') { %>
 
                 <a
                     href="/notice/edit/<%= notice.notice_id %>"

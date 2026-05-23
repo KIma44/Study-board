@@ -20,6 +20,13 @@
 
     </div>
 
+    <!-- JWT 로그인 상태 표시 -->
+    <% if (typeof loginUser !== 'undefined' && loginUser) { %>
+        <div style="margin-bottom:10px; color:gray;">
+            로그인 중: <%= loginUser.nickName %>
+        </div>
+    <% } %>
+
     <!-- 프로필 -->
     <div class="profile-card">
 
@@ -79,7 +86,7 @@
             <h2>✍ 내가 작성한 글</h2>
         </div>
 
-        <% if(posts.length === 0) { %>
+        <% if(!posts || posts.length === 0) { %>
 
             <div class="empty">
                 작성한 글이 없습니다.
@@ -106,13 +113,9 @@
                         <td>
 
                             <% if(post.type === 'free') { %>
-
                                 📝 자유게시판
-
                             <% } else { %>
-
                                 📘 공부게시판
-
                             <% } %>
 
                         </td>
@@ -163,13 +166,22 @@
             📘 공부게시판
         </a>
 
-        <a href="/logout" class="btn logout">
+        <a href="#" class="btn logout" onclick="logout()">
             🚪 로그아웃
         </a>
 
     </div>
 
 </div>
+
+<script>
+    // JWT 로그아웃 (클라이언트 방식)
+    function logout() {
+        localStorage.removeItem('token');
+        alert('로그아웃 되었습니다');
+        location.href = '/login';
+    }
+</script>
 
 </body>
 </html>

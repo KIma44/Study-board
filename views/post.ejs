@@ -1,19 +1,50 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>게시글 목록</title>
 </head>
 <body>
-    <h1>게시글 목록</h1>
 
-<% posts.forEach(post => { %>
-    <a href="/post/<%= post.post_id %>">
-        <p><%= post.title %></p>
+<h1>자유게시판</h1>
+
+<% if (!posts || posts.length === 0) { %>
+    <p>게시글이 없습니다.</p>
+<% } else { %>
+
+    <% posts.forEach(post => { %>
+
+        <div style="border:1px solid #ddd; padding:10px; margin:10px;">
+
+            <a href="/post/post/<%= post.post_id %>">
+
+                <h3><%= post.title %></h3>
+
+            </a>
+
+            <p>작성자 : <%= post.nickName %></p>
+
+        </div>
+
+    <% }) %>
+
+<% } %>
+
+
+<% if(loginUser){ %>
+
+    <a href="/post/write">
+        글쓰기
     </a>
-<% }) %>
 
-<a href="/post/new">글쓰기</a>
+<% } else { %>
+
+    <a href="/login">
+        로그인 후 글쓰기
+    </a>
+
+<% } %>
+
 </body>
 </html>

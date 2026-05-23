@@ -1,240 +1,355 @@
 const db = require('../config/db');
 
-// ✅ 공통 유효성 검사 함수
-function isValid(value) {
-    return value && value.trim() !== '';
-}
 
-// 메인 (조회)
+// ======================
+// 게시글 목록 + 검색 + 페이지
+// ======================
 exports.getMain = (req, res) => {
-    const page = parseInt(req.query.page) || 1;
-    const limit = 10;
-    const offset = (page - 1) * limit;
 
     const type = req.query.type || 'all';
     const keyword = req.query.keyword || '';
 
-    let where = '';
-    let params = [];
+    const currentPage = parseInt(req.query.page) || 1;
 
+    const pageSize = 10;
+    const offset = (currentPage - 1) * pageSize;
+
+    let whereSql = '';
+    let values = [];
+
+    // 검색
     if (keyword) {
+
         if (type === 'title') {
-            where = "WHERE posts.title LIKE ?";
-            params.push(`%${keyword}%`);
-        } else if (type === 'writer') {
-            where = "WHERE users.nickName LIKE ?";
-            params.push(`%${keyword}%`);
-        } else {
-            where = "WHERE posts.title LIKE ? OR users.nickName LIKE ?";
-            params.push(`%${keyword}%`, `%${keyword}%`);
+
+            whereSql =
+            `WHERE p.title LIKE ?`;
+
+            values.push(`%${keyword}%`);
+
         }
+
+        else if (type === 'writer') {
+
+            whereSql =
+            `WHERE u.nickName LIKE ?`;
+
+            values.push(`%${keyword}%`);
+
+        }
+
+        else {
+
+            whereSql =
+            `
+            WHERE
+            p.title LIKE ?
+            OR u.nickName LIKE ?
+            `;
+
+            values.push(
+                `%${keyword}%`,
+                `%${keyword}%`
+            );
+
+        }
+
     }
 
+    // 게시글 개수
     const countSql = `
         SELECT COUNT(*) AS total
-        FROM posts
-        JOIN users ON posts.user_id = users.user_id
-        ${where}
+        FROM posts p
+        JOIN users u
+        ON p.user_id=u.user_id
+        ${whereSql}
     `;
 
-    db.query(countSql, params, (err, countResult) => {
-        if (err) throw err;
-
-        const totalPosts = countResult[0].total;
-        const totalPages = Math.ceil(totalPosts / limit);
-
-        const sql = `
-                    SELECT
-                        posts.*,
-                        users.user_id,
-                        users.nickName,
-                        users.profile_image
-
-                    FROM posts
-
-                    JOIN users
-                    ON posts.user_id = users.user_id
-
-                    ${where}
-
-                    ORDER BY post_id DESC
-
-                    LIMIT ? OFFSET ?
-                `;
-
-        db.query(sql, [...params, limit, offset], (err, results) => {
-            if (err) throw err;
-
-            res.render('index', {
-                posts: results,
-                currentPage: page,
-                totalPages: totalPages,
-                type,
-                keyword
-            });
-        });
-    });
-};
-
-// 글 작성 페이지
-exports.getWrite = (req, res) => { 
-    const userId = req.session.user?.user_id; 
-    if (!userId) { return res.redirect('/login?error=login'); 
-
-    } 
-    res.render('write'); 
-};
-
-// ✅ 글 작성
-exports.postWrite = (req, res) => {
-    const { title, content } = req.body;
-
-    if (!req.session.user) {
-        ```js id="7l14wj"
-if (!req.session.user) {
-    return res.redirect('/login?error=login');
-}
-```
-
-    }
-
-    // 유효성 검사
-    if (!isValid(title) || !isValid(content)) {
-        return res.send('제목과 내용을 입력하세요');
-    }
-
-    const userId = req.session.user.user_id;
-    
-    const sql = 'INSERT INTO posts (title, content, user_id) VALUES (?, ?,  ?)';
-
-    db.query(sql, [title.trim(), content.trim(), userId], (err) => {
-        if (err) {
-            console.error(err);
-            return res.send('DB 오류');
-        }
-
-        res.redirect('/');
-    });
-};
-
-// 삭제
-exports.deletePost = (req, res) => {
-    const id = req.params.id;
-
-    db.query('SELECT * FROM posts WHERE post_id = ?', [id], (err, results) => {
-        if (err) throw err;
-
-        const post = results[0];
-        const user = req.session.user;
-
-        if (user.role !== 'admin' && user.id !== post.user_id) {
-            return res.send('권한 없음');
-        }
-
-        db.query('DELETE FROM posts WHERE post_id = ?', [id], (err) => {
-            if (err) throw err;
-
-            res.redirect('/');
-        });
-    });
-};
-
-// 수정 페이지
-exports.getEdit = (req, res) => {
-
-    const userId = req.session.user?.user_id;
-
-    if (!userId) {
-        return res.redirect('/login?error=login');
-    }
-
-    const id = req.params.id;
-
-    db.query('SELECT * FROM posts WHERE post_id = ?', [id], (err, results) => {
+    db.query(countSql, values, (err, countResult) => {
 
         if (err) throw err;
 
-        res.render('edit', {
-            post: results[0]
-        });
+        const totalCount =
+            countResult[0].total;
 
-    });
+        const totalPages =
+            Math.ceil(totalCount / pageSize);
 
-};
+        // 게시글 가져오기
+        const postSql = `
+            SELECT p.*,u.nickName
+            FROM posts p
+            JOIN users u
+            ON p.user_id=u.user_id
+            ${whereSql}
+            ORDER BY p.post_id DESC
+            LIMIT ? OFFSET ?
+        `;
 
+        db.query(
+            postSql,
+            [...values, pageSize, offset],
+            (err, results) => {
 
-//  수정 처리 (권한 + 유효성 포함)
-exports.postEdit = (req, res) => {
-    const id = req.params.id;
-    const { title, content } = req.body;
+                if (err) throw err;
 
-    if (!req.session.user) {
- 
-    if (!req.session.user) {
-        return res.redirect('/login?error=login');
-    }
+                res.render(
+                    'index',
+                    {
+                        posts: results,
+                        loginUser: req.user || null,
 
+                        type,
+                        keyword,
 
-    }
+                        currentPage,
+                        totalPages
+                    }
+                );
 
-    //  유효성 검사
-    if (!isValid(title) || !isValid(content)) {
-        return res.send('제목과 내용을 입력하세요');
-    }
-
-    //  작성자 or 관리자만 수정 가능
-    db.query('SELECT * FROM posts WHERE post_id = ?', [id], (err, results) => {
-        if (err) throw err;
-
-        const post = results[0];
-        const user = req.session.user;
-
-        if (user.role !== 'admin' && user.id !== post.user_id) {
-            return res.send('권한 없음');
-        }
-
-        const sql = 'UPDATE posts SET title = ?, content = ? WHERE post_id = ?';
-
-        db.query(sql, [title.trim(), content.trim(), id], (err) => {
-            if (err) {
-                console.error(err);
-                return res.send('DB 오류');
             }
+        );
 
-            res.redirect('/');
-        });
+    });
+
+};
+
+
+// ======================
+// 글 작성 페이지
+// ======================
+exports.getWrite=(req,res)=>{
+
+    res.render('write');
+
+};
+
+
+// ======================
+// 글 작성 처리
+// ======================
+exports.createPost = (req, res) => {
+
+    // 로그인 체크
+    if (!req.user) {
+        return res.redirect('/login');
+    }
+
+    const userId = req.user.user_id;
+
+    const { title, content } = req.body;
+
+    // 입력값 체크
+    if (!title || !content) {
+        return res.send(
+            "<script>alert('빈 값 있음');history.back();</script>"
+        );
+    }
+
+    const sql = `
+        INSERT INTO posts
+        (
+            user_id,
+            title,
+            content
+        )
+        VALUES (?, ?, ?)
+    `;
+
+    db.query(sql, [userId, title, content], (err) => {
+
+        if (err) throw err;
+
+        res.redirect('/post'); // ← 여기가 더 자연스러움
     });
 };
 
-// 상세 조회
-exports.getDetail = (req, res) => {
+
+// ======================
+// 게시글 상세
+// ======================
+exports.getPostDetail = (req, res) => {
+
     const postId = req.params.id;
 
     const postSql = `
-        SELECT posts.*, users.nickName
-        FROM posts
-        JOIN users ON posts.user_id = users.user_id
-        WHERE post_id = ?
+        SELECT p.*, u.nickName
+        FROM posts p
+        JOIN users u
+        ON p.user_id = u.user_id
+        WHERE p.post_id = ?
     `;
 
     const commentSql = `
-        SELECT comments.*, users.nickName
-        FROM comments
-        JOIN users ON comments.user_id = users.user_id
-        WHERE post_id = ?
-        ORDER BY comment_id DESC
+        SELECT c.*, u.nickName
+        FROM comments c
+        JOIN users u
+        ON c.user_id = u.user_id
+        WHERE c.post_id = ?
+        ORDER BY c.comment_id DESC
     `;
 
     db.query(postSql, [postId], (err, postResult) => {
+
         if (err) throw err;
 
+        if (postResult.length === 0) {
+            return res.send("게시글 없음");
+        }
+
         db.query(commentSql, [postId], (err, commentResult) => {
+
             if (err) throw err;
 
-            res.render('detail', {
-                post: postResult[0],
-                comments: commentResult 
-            });
+            res.render(
+                'detail',
+                {
+                    post: postResult[0],
+                    comments: commentResult,
+                    loginUser: req.user || null
+                }
+            );
+
         });
+
     });
+
+};
+
+// ======================
+// 수정 페이지
+// ======================
+exports.getEditPost=(req,res)=>{
+
+    const postId =
+        req.params.id;
+
+    db.query(
+        `
+        SELECT *
+        FROM posts
+        WHERE post_id=?
+        `,
+        [postId],
+        (err,result)=>{
+
+            if(err) throw err;
+
+            if(
+                result[0].user_id
+                !==
+                req.user.user_id
+            ){
+
+                return res.send(
+                    "<script>alert('권한 없음');history.back();</script>"
+                );
+
+            }
+
+            res.render(
+                'edit',
+                {
+                    post:result[0]
+                }
+            );
+
+        }
+    );
+
+};
+
+
+// ======================
+// 수정 처리
+// ======================
+exports.updatePost=(req,res)=>{
+
+    const postId =
+        req.params.id;
+
+    const {
+        title,
+        content
+    } = req.body;
+
+    const sql=`
+        UPDATE posts
+        SET
+        title=?,
+        content=?
+        WHERE post_id=?
+    `;
+
+    db.query(
+        sql,
+        [
+            title,
+            content,
+            postId
+        ],
+        (err)=>{
+
+            if(err) throw err;
+
+            res.redirect(
+                '/post/'+postId
+            );
+
+        }
+    );
+
+};
+
+
+// ======================
+// 삭제
+// ======================
+exports.deletePost=(req,res)=>{
+
+    const postId =
+        req.params.id;
+
+    db.query(
+        `
+        SELECT user_id
+        FROM posts
+        WHERE post_id=?
+        `,
+        [postId],
+        (err,result)=>{
+
+            if(err) throw err;
+
+            if(
+                result[0].user_id
+                !==
+                req.user.user_id
+            ){
+
+                return res.send(
+                    "<script>alert('권한 없음');history.back();</script>"
+                );
+
+            }
+
+            db.query(
+                `
+                DELETE
+                FROM posts
+                WHERE post_id=?
+                `,
+                [postId],
+                (err)=>{
+
+                    if(err) throw err;
+
+                    res.redirect('/');
+
+                }
+            );
+
+        }
+    );
+
 };

@@ -2,19 +2,80 @@ const express = require('express');
 const router = express.Router();
 
 const noticeController = require('../controllers/noticeController');
+const { verifyToken, isAdmin } = require('../middleware/authMiddleware');
 
-router.get('/', noticeController.noticeList);
 
-router.get('/write', noticeController.noticeWritePage);
+// ========================
+// 공지 목록
+// ========================
+router.get(
+    '/',
+    noticeController.noticeList
+);
 
-router.post('/write', noticeController.noticeWrite);
 
-router.get('/:id', noticeController.noticeDetail);
+// ========================
+// 공지 작성 페이지
+// ========================
+router.get(
+    '/write',
+    verifyToken,
+    isAdmin,
+    noticeController.noticeWritePage
+);
 
-router.get('/edit/:id', noticeController.noticeEditPage);
 
-router.post('/edit/:id', noticeController.noticeEdit);
+// ========================
+// 공지 작성
+// ========================
+router.post(
+    '/write',
+    verifyToken,
+    isAdmin,
+    noticeController.noticeWrite
+);
 
-router.get('/delete/:id', noticeController.noticeDelete);
+
+// ========================
+// 공지 수정 페이지
+// ========================
+router.get(
+    '/edit/:id',
+    verifyToken,
+    isAdmin,
+    noticeController.noticeEditPage
+);
+
+
+// ========================
+// 공지 수정
+// ========================
+router.post(
+    '/edit/:id',
+    verifyToken,
+    isAdmin,
+    noticeController.noticeEdit
+);
+
+
+// ========================
+// 공지 삭제
+// ========================
+router.get(
+    '/delete/:id',
+    verifyToken,
+    isAdmin,
+    noticeController.noticeDelete
+);
+
+
+// ========================
+// 공지 상세
+// 반드시 맨 아래
+// ========================
+router.get(
+    '/:id',
+    noticeController.noticeDetail
+);
 
 module.exports = router;

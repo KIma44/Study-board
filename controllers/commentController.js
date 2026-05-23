@@ -3,21 +3,14 @@ const db = require('../config/db');
 // 댓글 작성
 exports.addComment = (req, res) => {
 
-    // 로그인 체크
-    if (!req.session.user) {
-        return res.send("<script>alert('로그인 필요'); location.href='/login';</script>");
-    }
-
-    const userId = req.session.user.user_id;
+    const userId = req.user.user_id; // 🔥 변경
     const postId = req.body.post_id;
     const content = req.body.content;
 
-    // 댓글 빈 값 체크
     if (!content || content.trim() === '') {
         return res.send("<script>alert('댓글을 입력하세요'); history.back();</script>");
     }
 
-    // 게시글 작성자 조회
     const sql = "SELECT user_id FROM posts WHERE post_id = ?";
 
     db.query(sql, [postId], (err, result) => {
@@ -25,12 +18,10 @@ exports.addComment = (req, res) => {
 
         const postOwner = result[0].user_id;
 
-        //  자기 글 체크
         if (Number(userId) === Number(postOwner)) {
             return res.send("<script>alert('자신의 글에는 댓글을 달 수 없습니다.'); history.back();</script>");
         }
 
-        // 댓글 등록
         const insertSql = `
             INSERT INTO comments (post_id, user_id, content)
             VALUES (?, ?, ?)
@@ -43,7 +34,7 @@ exports.addComment = (req, res) => {
     });
 };
 
-// 댓글 수정 페이지 가져오기
+// 댓글 수정 페이지
 exports.getEditComment = (req, res) => {
 
     const commentId = req.params.id;
@@ -61,12 +52,13 @@ exports.getEditComment = (req, res) => {
     );
 };
 
-// 댓글 수정 처리
+// 댓글 수정
 exports.postEditComment = (req, res) => {
 
     const commentId = req.params.id;
     const content = req.body.content;
-    const userId = req.session.user.user_id;
+    const userId = req.user.user_id; // 🔥 변경
+
     const sql = "SELECT * FROM comments WHERE comment_id = ?";
 
     db.query(sql, [commentId], (err, result) => {
@@ -74,7 +66,6 @@ exports.postEditComment = (req, res) => {
 
         const comment = result[0];
 
-        // 🔥 본인 체크
         if (Number(comment.user_id) !== Number(userId)) {
             return res.send("<script>alert('권한 없음'); history.back();</script>");
         }
@@ -90,13 +81,14 @@ exports.postEditComment = (req, res) => {
             res.redirect(`/post/${comment.post_id}`);
         });
     });
-}
+};
 
 // 댓글 삭제
 exports.deleteComment = (req, res) => {
 
     const commentId = req.params.id;
-    const userId = req.session.user.user_id;
+    const userId = req.user.user_id; // 🔥 변경
+
     const sql = "SELECT * FROM comments WHERE comment_id = ?";
 
     db.query(sql, [commentId], (err, result) => {
@@ -104,7 +96,6 @@ exports.deleteComment = (req, res) => {
 
         const comment = result[0];
 
-        //  본인 댓글 체크
         if (Number(comment.user_id) !== Number(userId)) {
             return res.send("<script>alert('권한 없음'); history.back();</script>");
         }

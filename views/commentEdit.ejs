@@ -1,16 +1,38 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
-<body>
-    <h3>댓글 수정</h3>
+    <title>댓글 수정</title>
 
-<form method="POST" action="/comment/edit/<%= comment.comment_id %>">
-    <textarea name="content"><%= comment.content %></textarea>
-    <button type="submit">수정</button>
-</form>
+    <link rel="stylesheet" href="/commentEdit.css">
+
+</head>
+
+<body>
+
+<div class="container">
+
+    <h3>💬 댓글 수정</h3>
+
+    <form method="POST" action="/comment/edit/<%= comment.comment_id %>">
+
+        <textarea name="content" required><%= comment.content %></textarea>
+
+        <div class="btn-box">
+
+            <button type="submit" class="submit-btn">
+                수정 완료
+            </button>
+
+            <a href="javascript:history.back()" class="back-btn">
+                취소
+            </a>
+
+        </div>
+
+    </form>
+
+</div>
+
 </body>
 </html>

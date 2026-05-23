@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>공부 기록 상세</title>
+    <link rel="stylesheet" href="/studyDetail.css">
+</head>
+
+<body>
+
+<div class="container">
+
+    <!-- 상단 헤더 -->
+    <div class="header">
+
+        <div class="title-box">
+            <h2>📘 공부 기록</h2>
+            <span class="sub">Study Board Detail</span>
+        </div>
+
+        <a href="/study" class="back-btn">← 목록</a>
+
+    </div>
+
+    <!-- 게시글 카드 -->
+    <div class="post-card">
+
+        <!-- 작성자 영역 -->
+        <div class="post-header">
+
+            <div class="writer-info">
+
+                <div class="profile-circle">
+                    👤
+                </div>
+
+                <div>
+                    <div class="writer-name">
+                        <%= log.nickName %>
+                    </div>
+
+                    <div class="date">
+                        <%= new Date(log.created_at).toLocaleString('ko-KR') %>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="meta">
+
+                <span>📂 <%= log.category %></span>
+                <span>⏱ <%= log.study_time %>시간</span>
+
+            </div>
+
+        </div>
+
+        <hr>
+
+        <!-- 제목 -->
+        <div class="post-title">
+            <%= log.title %>
+        </div>
+
+        <!-- 본문 -->
+        <div class="post-content">
+            <pre><%= log.content %></pre>
+        </div>
+
+    </div>
+
+    <!-- 버튼 -->
+    <div class="btn-box">
+
+        <% if (loginUser && (loginUser.user_id === log.user_id || loginUser.role === 'admin')) { %>
+
+            <a href="/study/edit/<%= log.study_log_id %>" class="btn edit">
+                수정
+            </a>
+
+            <a href="/study/delete/<%= log.study_log_id %>"
+               class="btn delete"
+               onclick="return confirm('삭제하시겠습니까?')">
+                삭제
+            </a>
+
+        <% } %>
+
+    </div>
+
+</div>
+
+</body>
+</html>

@@ -1,12 +1,12 @@
 const db = require('../config/db');
 
-// 저장
+
+// ========================
+// 📌 공부 기록 작성
+// ========================
 exports.createStudyLog = (req, res) => {
 
-    // 로그인 체크
-    if (!req.session.user) {
-        return res.redirect('/login?error=login');
-    }
+    const user_id = req.user.user_id;
 
     const {
         title,
@@ -16,108 +16,116 @@ exports.createStudyLog = (req, res) => {
         todo_content
     } = req.body;
 
-    const user_id = req.session.user.user_id;
-
-    // study 저장
     const sql = `
         INSERT INTO study_logs
-        (
-            user_id,
-            title,
-            content,
-            study_time,
-            category,
-            created_at,
-            updated_at
-        )
+        (user_id, title, content, study_time, category, created_at, updated_at)
         VALUES (?, ?, ?, ?, ?, NOW(), NOW())
     `;
 
-    db.query(
-        sql,
-        [user_id, title, content, study_time, category],
-        (err, result) => {
+    db.query(sql, [user_id, title, content, study_time, category], (err, result) => {
 
-            if (err) {
-                console.log(err);
-                return res.send("DB 오류");
-            }
-
-            const studyLogId = result.insertId;
-
-            // TODO 없으면 종료
-            if (!todo_content || todo_content.trim() === '') {
-                return res.redirect('/study');
-            }
-
-            // TODO 저장
-            const todoSql = `
-                INSERT INTO todos
-                (
-                    content,
-                    user_id,
-                    study_log_id,
-                    created_at,
-                    updated_at
-                )
-                VALUES (?, ?, ?, NOW(), NOW())
-            `;
-
-            db.query(
-                todoSql,
-                [todo_content, user_id, studyLogId],
-                (todoErr) => {
-
-                    if (todoErr) {
-                        console.log(todoErr);
-                        return res.send("TODO 저장 오류");
-                    }
-
-                    res.redirect('/study');
-                }
-            );
+        if (err) {
+            console.log(err);
+            return res.send("DB 오류");
         }
-    );
-};
 
-// 목록 조회
-exports.getStudyLogs = (req, res) => {
+        const studyLogId = result.insertId;
 
-    const sql = `
-        SELECT study_logs.*, users.nickName
-        FROM study_logs
-        JOIN users
-        ON study_logs.user_id = users.user_id
-        ORDER BY study_log_id DESC
-    `;
+        // TODO 없으면 종료
+        if (!todo_content || todo_content.trim() === '') {
+            return res.redirect('/study');
+        }
 
-    db.query(sql, (err, results) => {
+        const todoSql = `
+            INSERT INTO todos
+            (content, user_id, study_log_id, created_at, updated_at)
+            VALUES (?, ?, ?, NOW(), NOW())
+        `;
 
-        if (err) throw err;
+        db.query(todoSql, [todo_content, user_id, studyLogId], (todoErr) => {
 
-        res.render('study/study', {
-            logs: results,
-            session: req.session
+            if (todoErr) {
+                console.log(todoErr);
+                return res.send("TODO 저장 오류");
+            }
+
+            res.redirect('/study');
         });
     });
 };
 
-// 삭제
+
+// ========================
+// 📌 목록 조회 + 페이지
+// ========================
+exports.getStudyLogs = (req, res) => {
+
+    const page = parseInt(req.query.page) || 1;
+
+    const limit = 10;
+    const offset = (page - 1) * limit;
+
+    // 전체 개수 조회
+    const countSql = `
+        SELECT COUNT(*) AS total
+        FROM study_logs
+    `;
+
+    db.query(countSql, (err, countResult) => {
+
+        if (err) throw err;
+
+        const totalPosts = countResult[0].total;
+        const totalPages = Math.ceil(
+            totalPosts / limit
+        );
+
+        // 현재 페이지 데이터만 가져오기
+        const sql = `
+            SELECT study_logs.*, users.nickName
+            FROM study_logs
+            JOIN users
+            ON study_logs.user_id=users.user_id
+            ORDER BY study_log_id DESC
+            LIMIT ?
+            OFFSET ?
+        `;
+
+        db.query(
+            sql,
+            [limit, offset],
+            (err, results) => {
+
+                if(err) throw err;
+
+                res.render(
+                    'study/study',
+                    {
+                        logs: results,
+                        loginUser:req.user || null,
+
+                        currentPage:page,
+                        totalPages
+                    }
+                );
+
+            }
+        );
+
+    });
+
+};
+
+// ========================
+// 📌 삭제
+// ========================
 exports.deleteStudyLog = (req, res) => {
 
     const id = req.params.id;
-
-    // 로그인 체크
-    if (!req.session.user) {
-        return res.redirect('/login?error=login');
-    }
-
-    const user = req.session.user;
+    const user = req.user;
 
     const sql = `
-        SELECT *
-        FROM study_logs
-        WHERE study_log_id = ?
+        SELECT * FROM study_logs WHERE study_log_id = ?
     `;
 
     db.query(sql, [id], (err, result) => {
@@ -131,10 +139,7 @@ exports.deleteStudyLog = (req, res) => {
         }
 
         // 권한 체크
-        if (
-            user.user_id !== log.user_id &&
-            user.role !== 'admin'
-        ) {
+        if (user.user_id !== log.user_id && user.role !== 'admin') {
             return res.send("권한 없음");
         }
 
@@ -151,13 +156,11 @@ exports.deleteStudyLog = (req, res) => {
     });
 };
 
-// 수정 페이지
-exports.getEditPage = (req, res) => {
 
-    // 로그인 체크
-    if (!req.session.user) {
-        return res.redirect('/login?error=login');
-    }
+// ========================
+// 📌 수정 페이지
+// ========================
+exports.getEditPage = (req, res) => {
 
     const id = req.params.id;
 
@@ -175,10 +178,7 @@ exports.getEditPage = (req, res) => {
             }
 
             // 권한 체크
-            if (
-                req.session.user.user_id !== log.user_id &&
-                req.session.user.role !== 'admin'
-            ) {
+            if (req.user.user_id !== log.user_id && req.user.role !== 'admin') {
                 return res.send("권한 없음");
             }
 
@@ -189,13 +189,11 @@ exports.getEditPage = (req, res) => {
     );
 };
 
-// 수정 처리
-exports.updateStudyLog = (req, res) => {
 
-    // 로그인 체크
-    if (!req.session.user) {
-        return res.redirect('/login?error=login');
-    }
+// ========================
+// 📌 수정 처리
+// ========================
+exports.updateStudyLog = (req, res) => {
 
     const id = req.params.id;
 
@@ -220,31 +218,17 @@ exports.updateStudyLog = (req, res) => {
             }
 
             // 권한 체크
-            if (
-                req.session.user.user_id !== log.user_id &&
-                req.session.user.role !== 'admin'
-            ) {
+            if (req.user.user_id !== log.user_id && req.user.role !== 'admin') {
                 return res.send("권한 없음");
             }
 
             db.query(
                 `
                 UPDATE study_logs
-                SET
-                    title = ?,
-                    content = ?,
-                    study_time = ?,
-                    category = ?,
-                    updated_at = NOW()
-                WHERE study_log_id = ?
+                SET title=?, content=?, study_time=?, category=?, updated_at=NOW()
+                WHERE study_log_id=?
                 `,
-                [
-                    title,
-                    content,
-                    study_time,
-                    category,
-                    id
-                ],
+                [title, content, study_time, category, id],
                 (err) => {
 
                     if (err) throw err;
@@ -256,69 +240,52 @@ exports.updateStudyLog = (req, res) => {
     );
 };
 
-// 상세 보기
+
+// ========================
+// 📌 상세 보기
+// ========================
 exports.getDetail = (req, res) => {
 
     const id = req.params.id;
 
-    // 로그인 체크
-    const userId = req.session.user?.user_id;
-
-    if (!userId) {
-        return res.redirect('/login?error=login');
-    }
-
     const sql = `
-        SELECT *
+        SELECT study_logs.*, users.nickName
         FROM study_logs
+        JOIN users
+        ON study_logs.user_id = users.user_id
         WHERE study_log_id = ?
-        AND user_id = ?
     `;
 
-    db.query(sql, [id, userId], (err, result) => {
+    db.query(sql, [id], (err, result) => {
 
-        if (err) {
-            console.log(err);
-            return res.send("DB 오류");
+        if (err) throw err;
+
+        const log = result[0];
+
+        if (!log) {
+            return res.send("글 없음");
         }
 
-        if (result.length === 0) {
-            return res.send("본인 게시글만 접근 가능합니다.");
-        }
-
-        // TODO 조회
-        const todoSql = `
-            SELECT *
-            FROM todos
-            WHERE study_log_id = ?
-            AND user_id = ?
-            ORDER BY todo_id DESC
-        `;
-
-        db.query(todoSql, [id, userId], (todoErr, todos) => {
-
-            if (todoErr) {
-                console.log(todoErr);
-                return res.send("TODO DB 오류");
+        res.render(
+            'study/studyDetail',
+            {
+                log,
+                loginUser: req.user || null
             }
+        );
 
-            res.render('study/studyDetail', {
-                post: result[0],
-                todos: todos
-            });
-        });
     });
 };
 
-// 작성 페이지
+
+// ========================
+// 📌 작성 페이지
+// ========================
 exports.getWritePage = (req, res) => {
 
-    const userId = req.session.user?.user_id;
-
-    if (!userId) {
+    if (!req.user) {
         return res.redirect('/login?error=login');
     }
 
     res.render('study/studyWrite');
 };
-

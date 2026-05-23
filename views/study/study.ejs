@@ -3,155 +3,145 @@
 <head>
     <meta charset="UTF-8">
     <title>공부 기록</title>
-
     <link rel="stylesheet" href="/study.css">
 </head>
 <body>
 
+<!-- 상단 네비게이션 -->
+<div class="navbar">
+
+    <div class="menu center-menu">
+
+        <a href="/study">📘 공부기록판</a>
+        <a href="/todo">✅ 할일</a>
+        <a href="/post">📝 자유게시판</a>
+        <a href="/notice">📢 공지사항</a>
+        <a href="/myPage">👤 마이페이지</a>
+
+    </div>
+
+    <div class="user-menu">
+
+        <% if (!loginUser) { %>
+
+            <a href="/login">로그인</a>
+            <a href="/register">회원가입</a>
+
+        <% } else { %>
+
+            <a href="/profile/<%= loginUser.user_id %>">
+                <img
+                    src="<%= loginUser.profile_image || '/default-profile.png' %>"
+                    style="width:32px;height:32px;border-radius:50%;cursor:pointer;"
+                    title="프로필 수정"
+                >
+            </a>
+
+            <span><%= loginUser.nickName %>님</span>
+
+            <a href="/logout">로그아웃</a>
+
+        <% } %>
+
+    </div>
+
+</div>
+
+
 <div class="container">
 
-    <!-- 상단 -->
     <div class="header">
-        <h2>📘 공부 기록 게시판</h2>
-
-        <a href="/" class="home-btn">
-            ← 메인으로
-        </a>
+        <h1>📘 공부 기록 게시판</h1>
     </div>
 
-    <!-- 작성 버튼 -->
+    <% if (loginUser) { %>
     <div class="write-btn-box">
-
-        <a href="/study/write" class="write-btn">
-            ✏ 글 작성
-        </a>
-
+        <a href="/study/write" class="write-btn">✏ 글 작성</a>
     </div>
+    <% } %>
 
     <hr>
 
     <!-- 목록 -->
     <div class="list">
 
-        <% if (logs.length === 0) { %>
-
-            <p class="empty">
-                작성된 기록이 없습니다.
-            </p>
-
+        <% if (!logs || logs.length === 0) { %>
+            <p class="empty">작성된 기록이 없습니다.</p>
         <% } %>
 
         <% logs.forEach(log => { %>
 
-            <div class="log-box">
+        <div class="log-box">
 
-                <!-- 상단 -->
-                <div class="top">
+            <div class="top">
+                <h3>
+                    <a href="/study/detail/<%= log.study_log_id %>" class="title-link">
+                        <%= log.title %>
+                    </a>
+                </h3>
 
-                    <!-- 제목 클릭 시 TODO 이동 -->
-                    <h3>
+                <span class="writer">
+                    👤 <%= log.nickName %>
+                </span>
+            </div>
 
-                    <% if (
-                        session.user &&
-                        (
-                            session.user.user_id === log.user_id ||
-                            session.user.role === 'admin'
-                        )
-                    ) { %>
+            <p class="content"><%= log.content %></p>
 
-                        <!-- 본인 또는 관리자 -->
-                        <a href="/todo/<%= log.study_log_id %>"
-                        class="title-link">
+            <div class="bottom">
+                <span>📂 <%= log.category %></span>
+                <span>⏱ <%= log.study_time %>시간</span>
+                <span><%= new Date(log.created_at).toLocaleString('ko-KR') %></span>
 
-                            <%= log.title %>
+                <% if (loginUser && (loginUser.user_id === log.user_id || loginUser.role === 'admin')) { %>
 
-                        </a>
+                    <a href="/study/edit/<%= log.study_log_id %>">수정</a>
 
-                    <% } else { %>
+                    <a href="/study/delete/<%= log.study_log_id %>"
+                       onclick="return confirm('삭제할까요?')">
+                        삭제
+                    </a>
 
-                        <!-- 다른 사람 -->
-                        <span class="locked-title">
-                              <%= log.title %>
-                        </span>
-
-                    <% } %>
-
-                    </h3>
-
-                    <!-- 작성자 -->
-                    <span class="writer">
-                        👤 <%= log.nickName %>
-                    </span>
-
-                </div>
-
-                <!-- 내용 -->
-                <p class="content">
-                    <%= log.content %>
-                </p>
-
-                <!-- 하단 -->
-                <div class="bottom">
-
-                    <span class="category">
-                        📂 <%= log.category %>
-                    </span>
-
-                    <span class="time">
-                        ⏱ <%= log.study_time %>시간
-                    </span>
-
-                    <!-- 날짜 -->
-                    <span class="date">
-
-                        <%
-                            const time =
-                                (log.updated_at &&
-                                 log.updated_at != log.created_at)
-
-                                ? log.updated_at
-                                : log.created_at;
-                        %>
-
-                        <%= new Date(time).toLocaleString() %>
-
-                    </span>
-
-                    <!-- 수정 삭제 -->
-                    <% if (
-                        session.user &&
-                        (
-                            session.user.user_id === log.user_id ||
-                            session.user.role === 'admin'
-                        )
-                    ) { %>
-
-                        <!-- 수정 -->
-                        <% if (
-                            session.user.user_id === log.user_id
-                        ) { %>
-
-                            <a href="/study/edit/<%= log.study_log_id %>">
-                                수정
-                            </a>
-
-                        <% } %>
-
-                        <!-- 삭제 -->
-                        <a href="/study/delete/<%= log.study_log_id %>"
-                           onclick="return confirm('삭제할까요?')">
-
-                            삭제
-
-                        </a>
-
-                    <% } %>
-
-                </div>
+                <% } %>
 
             </div>
 
+        </div>
+
         <% }) %>
+
+    </div>
+
+    <hr>
+
+    <!-- 페이지네이션 (10개 단위 블록) -->
+    <div class="pagination">
+
+        <%
+        let page = currentPage || 1;
+        let total = totalPages || 1;
+        let blockSize = 10;
+
+        let currentBlock = Math.ceil(page / blockSize);
+        let startPage = (currentBlock - 1) * blockSize + 1;
+        let endPage = startPage + blockSize - 1;
+
+        if (endPage > total) endPage = total;
+        %>
+
+        <% if (startPage > 1) { %>
+            <a href="/study?page=<%= startPage - 1 %>">‹</a>
+        <% } %>
+
+        <% for (let i = startPage; i <= endPage; i++) { %>
+            <a href="/study?page=<%= i %>"
+               class="<%= i === page ? 'active' : '' %>">
+                <%= i %>
+            </a>
+        <% } %>
+
+        <% if (endPage < total) { %>
+            <a href="/study?page=<%= endPage + 1 %>">›</a>
+        <% } %>
 
     </div>
 

@@ -1,67 +1,34 @@
 const db = require('../config/db');
 
+
+// =====================
 // 로그인 페이지
+// =====================
 exports.getLogin = (req, res) => {
-    res.render('login');
+
+    res.render('user/login');
+
 };
 
-// 로그인 처리
-exports.postLogin = (req, res) => {
-    const { email, password } = req.body;
 
-    db.query('SELECT * FROM users WHERE email = ?', [email], (err, results) => {
-        if (err) throw err;
-
-        if (results.length === 0) {
-            return res.send('이메일 없음');
-        }
-
-        const user = results[0];
-
-        if (user.password !== password) {
-            return res.send('비밀번호 틀림');
-        }
-
-        req.session.user = {
-            user_id: user.user_id,
-            email: user.email,
-            nickName: user.nickName,
-            profile_image: user.profile_image,
-            role: user.role,
-            created_at: user.created_at
-        };
-
-        res.redirect('/');
-    });
-};
-
+// =====================
 // 회원가입 페이지
+// =====================
 exports.getRegister = (req, res) => {
-    res.render('register');
+
+    res.render('user/register');
+
 };
 
-// 회원가입 처리
-exports.postRegister = (req, res) => {
-    const { email, password, nickName } = req.body;
 
-    const sql = 'INSERT INTO users (email, password, nickName) VALUES (?, ?, ?)';
-
-    db.query(sql, [email, password, nickName], (err) => {
-        if (err) throw err;
-
-        res.redirect('/login');
-    });
-};
-
-// 로그아웃
-exports.logout = (req, res) => {
-    req.session.destroy();
-    res.redirect('/');
-};
-
+// =====================
+// 프로필 페이지
+// =====================
 exports.getProfile = (req, res) => {
 
-    const userId = req.params.id;
+    if (!req.user) {
+        return res.redirect('/login');
+    }
 
     const sql = `
         SELECT *
@@ -69,34 +36,42 @@ exports.getProfile = (req, res) => {
         WHERE user_id = ?
     `;
 
-    db.query(sql, [userId], (err, results) => {
+    db.query(
+        sql,
+        [req.user.user_id],
+        (err, result) => {
 
-        if (err) throw err;
+            if (err) {
+                console.log(err);
+                return res.send('DB 오류');
+            }
 
-        if (results.length === 0) {
-            return res.send('유저 없음');
+            if (result.length === 0) {
+                return res.send('사용자 없음');
+            }
+
+            res.render(
+                'user/profile',
+                {
+                    user: result[0]
+                }
+            );
+
         }
+    );
 
-        res.render('user/profile', {
-            user: results[0]
-        });
-
-    });
 };
+
+
+// =====================
+// 프로필 이미지 수정
+// =====================
+const jwt = require('jsonwebtoken');
 
 exports.updateProfile = (req, res) => {
 
-    if (!req.session.user) {
-        return res.redirect('/login');
-    }
-
-    const userId = req.session.user.user_id;
-    
-    if (!req.file) {
-        return res.redirect('/profile/' + userId);
-    }
-
-    const profilePath = '/uploads/' + req.file.filename;
+    const userId = req.user.user_id;
+    const image = '/uploads/' + req.file.filename;
 
     const sql = `
         UPDATE users
@@ -104,39 +79,72 @@ exports.updateProfile = (req, res) => {
         WHERE user_id = ?
     `;
 
-    db.query(sql, [profilePath, userId], (err) => {
+    db.query(sql, [image, userId], (err) => {
 
         if (err) throw err;
 
-        req.session.user.profile_image = profilePath;
+        // 중요: 기존 JWT 기반 + 새 이미지 반영
+        const newToken = jwt.sign(
+            {
+                user_id: req.user.user_id,
+                email: req.user.email,
+                nickName: req.user.nickName,
+                role: req.user.role,
+                profile_image: image   // 여기 바뀐 값
+            },
+            process.env.JWT_SECRET,
+            { expiresIn: '1h' }
+        );
 
-        res.redirect('/profile/' + userId);
+        // 쿠키 갱신
+        res.cookie('token', newToken, {
+            httpOnly: true
+        });
+
+        // 바로 공부게시판으로 이동
+        res.redirect('/study');
     });
 };
 
+
+// =====================
+// 회원정보 수정
+// =====================
 exports.updateUser = (req, res) => {
 
-    if (!req.session.user) {
+    if (!req.user) {
         return res.redirect('/login');
     }
 
-    const userId = req.session.user.user_id;
-
-    const { email, nickName } = req.body;
+    const {
+        nickName
+    } = req.body;
 
     const sql = `
         UPDATE users
-        SET email = ?, nickName = ?
+        SET nickName = ?
         WHERE user_id = ?
     `;
 
-    db.query(sql, [email, nickName, userId], (err) => {
+    db.query(
+        sql,
+        [
+            nickName,
+            req.user.user_id
+        ],
+        (err) => {
 
-        if (err) throw err;
+            if (err) {
+                console.log(err);
+                return res.send('수정 실패');
+            }
 
-        req.session.user.email = email;
-        req.session.user.nickName = nickName;
+            res.redirect(
+                '/profile/' +
+                req.user.user_id
+            );
 
-        res.redirect('/profile/' + userId);
-    });
+        }
+    );
+
 };

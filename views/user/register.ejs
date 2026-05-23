@@ -5,16 +5,28 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>회원가입</title>
     <link rel="stylesheet" href="/auth.css">
+</head>
+
+<body>
 
 <form class="auth-box" action="/register" method="POST">
+
     <h2>회원가입</h2>
 
     <input type="email" name="email" placeholder="이메일" required>
+
     <input type="password" name="password" placeholder="비밀번호" required>
+
     <input type="text" name="nickName" placeholder="닉네임" required>
 
     <button type="submit" class="register-btn">회원가입</button>
 
-    <p>이미 계정이 있으신가요? <a href="/login">로그인</a></p>
+    <p>
+        이미 계정이 있으신가요?
+        <a href="/login">로그인</a>
+    </p>
+
 </form>
+
+</body>
 </html>

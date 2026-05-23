@@ -1,17 +1,108 @@
 <!DOCTYPE html>
-<html>
+<html lang="ko">
 <head>
+    <meta charset="UTF-8">
     <title>글 수정</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f6f9;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            width: 600px;
+            margin: 80px auto;
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        input[type="text"],
+        textarea {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+
+        textarea {
+            height: 200px;
+            resize: none;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            background: #4a90e2;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        button:hover {
+            background: #357ab8;
+        }
+
+        .back {
+            display: block;
+            text-align: center;
+            margin-top: 15px;
+            text-decoration: none;
+            color: #666;
+        }
+
+        .back:hover {
+            color: #000;
+        }
+    </style>
+
 </head>
+
 <body>
 
-<h1>글 수정</h1>
+<div class="container">
 
-<form action="/edit/<%= post.post_id %>" method="POST">
-    <input type="text" name="title" value="<%= post.title %>"><br><br>
-    <textarea name="content"><%= post.content %></textarea><br><br>
-    <button type="submit">수정 완료</button>
-</form>
+    <h1>✏ 글 수정</h1>
+
+    <form action="/post/edit/<%= post.post_id %>" method="POST">
+
+        <input 
+            type="text" 
+            name="title" 
+            value="<%= post.title %>" 
+            required
+        >
+
+        <textarea 
+            name="content" 
+            required
+        ><%= post.content %></textarea>
+
+        <button type="submit">
+            수정 완료
+        </button>
+
+    </form>
+
+    <a class="back" href="/post">
+        ← 목록으로
+    </a>
+
+</div>
 
 </body>
 </html>

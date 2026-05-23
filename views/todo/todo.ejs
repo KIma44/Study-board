@@ -28,56 +28,58 @@
 
     <ul class="todo-list">
 
-    <% if (todos.length === 0) { %>
+    <% if (!todos || todos.length === 0) { %>
         <div class="empty">할 일이 없습니다 😴</div>
     <% } %>
 
     <% todos.forEach(function(todo) { %>
 
-    <% if (!todo || !todo.todo_id) return; %>
+        <% if (!todo || !todo.todo_id) return; %>
 
-<li class="todo-item">
+        <li class="todo-item">
 
-    <div class="left">
-        <form action="/todo/toggle/<%= todo.todo_id %>" method="POST">
-            <button type="submit">
-                <%= todo.is_completed ? '✅' : '⬜' %>
-            </button>
-        </form>
+            <div class="left">
 
+                <form action="/todo/toggle/<%= todo.todo_id %>" method="POST">
+                    <button type="submit">
+                        <%= todo.is_completed ? '✅' : '⬜' %>
+                    </button>
+                </form>
 
-        <div class="todo-content">
+                <div class="todo-content">
 
-            <div class="study-name">
-                📘 <%= todo.study_title || '일반 TODO' %>
+                    <div class="study-name">
+                        📘 <%= todo.study_title || '일반 TODO' %>
+                    </div>
+
+                    <span class="content">
+                        <%= todo.content %>
+                    </span>
+
+                </div>
+
+                <span class="date">
+                    <%= new Date(todo.updated_at || todo.created_at).toLocaleString('ko-KR') %>
+                </span>
+
             </div>
 
-            <span class="content">
-                <%= todo.content %>
-            </span>
+            <div class="right">
 
-        </div>
+                <form action="/todo/update/<%= todo.todo_id %>" method="POST">
+                    <input type="text" name="content" value="<%= todo.content %>">
+                    <button type="submit">수정</button>
+                </form>
 
+                <form action="/todo/delete/<%= todo.todo_id %>" method="POST">
+                    <button type="submit">삭제</button>
+                </form>
 
-        <span class="date">
-            <%= new Date(todo.updated_at || todo.created_at).toLocaleString() %>
-        </span>
-    </div>
+            </div>
 
-    <div class="right">
-        <form action="/todo/update/<%= todo.todo_id %>" method="POST">
-            <input type="text" name="content" value="<%= todo.content %>">
-            <button type="submit">수정</button>
-        </form>
+        </li>
 
-        <form action="/todo/delete/<%= todo.todo_id %>" method="POST">
-            <button type="submit">삭제</button>
-        </form>
-    </div>
-
-</li>
-
-<% }) %>
+    <% }) %>
 
     </ul>
 

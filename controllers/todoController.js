@@ -1,24 +1,20 @@
 const db = require('../config/db');
 
-// 특정 공부 TODO
+
+// ========================
+// 📌 특정 공부 TODO
+// ========================
 exports.getTodo = (req, res) => {
 
     const study_log_id = req.params.id;
-    const userId = req.session.user?.user_id;
+    const userId = req.user.user_id;
 
-    // 로그인 체크
-    if (!userId) {
-        return res.redirect('/login?error=login');
-    }
-
-    // 공부 제목 가져오기
     const studySql = `
         SELECT title
         FROM study_logs
         WHERE study_log_id = ?
     `;
 
-    // TODO 가져오기
     const todoSql = `
         SELECT *
         FROM todos
@@ -46,23 +42,17 @@ exports.getTodo = (req, res) => {
                 study_log_id,
                 studyTitle: studyResult[0]?.title || '제목 없음'
             });
-
         });
-
     });
-
 };
 
 
-// 전체 TODO
+// ========================
+// 📌 전체 TODO
+// ========================
 exports.getAllTodo = (req, res) => {
 
-    const userId = req.session.user?.user_id;
-
-    // 로그인 체크
-    if (!userId) {
-        return res.redirect('/login?error=login');
-    }
+    const userId = req.user.user_id;
 
     const sql = `
         SELECT
@@ -91,68 +81,47 @@ exports.getAllTodo = (req, res) => {
             study_log_id: null,
             studyTitle: '전체 TODO'
         });
-
     });
-
 };
 
 
-// TODO 추가
+// ========================
+// 📌 TODO 추가
+// ========================
 exports.addTodo = (req, res) => {
 
     const { content, study_log_id } = req.body;
-
-    const userId = req.session.user?.user_id;
-
-    // 로그인 체크
-    if (!userId) {
-        return res.redirect('/login?error=login');
-    }
+    const userId = req.user.user_id;
 
     const sql = `
         INSERT INTO todos 
-        (
-            content,
-            user_id,
-            study_log_id,
-            created_at,
-            updated_at
-        )
+        (content, user_id, study_log_id, created_at, updated_at)
         VALUES (?, ?, ?, NOW(), NOW())
     `;
 
-    db.query(
-        sql,
-        [content, userId, study_log_id || null],
-        (err) => {
+    db.query(sql, [content, userId, study_log_id || null], (err) => {
 
-            if (err) {
-                console.log(err);
-                return res.send("DB 오류");
-            }
-
-            res.redirect(req.get('Referer'));
+        if (err) {
+            console.log(err);
+            return res.send("DB 오류");
         }
-    );
+
+        res.redirect(req.get('Referer'));
+    });
 };
 
 
-// 체크 토글
+// ========================
+// 📌 TODO 완료 토글
+// ========================
 exports.toggleTodo = (req, res) => {
 
     const id = req.params.id;
-
-    const userId = req.session.user?.user_id;
-
-    // 로그인 체크
-    if (!userId) {
-        return res.redirect('/login?error=login');
-    }
+    const userId = req.user.user_id;
 
     const sql = `
         UPDATE todos
-        SET 
-            is_completed = NOT is_completed,
+        SET is_completed = NOT is_completed,
             updated_at = NOW()
         WHERE todo_id = ?
         AND user_id = ?
@@ -167,21 +136,16 @@ exports.toggleTodo = (req, res) => {
 
         res.redirect(req.get('Referer'));
     });
-
 };
 
 
-// 삭제
+// ========================
+// 📌 삭제
+// ========================
 exports.deleteTodo = (req, res) => {
 
     const id = req.params.id;
-
-    const userId = req.session.user?.user_id;
-
-    // 로그인 체크
-    if (!userId) {
-        return res.redirect('/login?error=login');
-    }
+    const userId = req.user.user_id;
 
     const sql = `
         DELETE FROM todos
@@ -198,29 +162,21 @@ exports.deleteTodo = (req, res) => {
 
         res.redirect(req.get('Referer'));
     });
-
 };
 
 
-// 수정
+// ========================
+// 📌 수정
+// ========================
 exports.updateTodo = (req, res) => {
 
     const id = req.params.id;
-
     const { content } = req.body;
-
-    const userId = req.session.user?.user_id;
-
-    // 로그인 체크
-    if (!userId) {
-        return res.redirect('/login?error=login');
-    }
+    const userId = req.user.user_id;
 
     const sql = `
         UPDATE todos
-        SET 
-            content = ?,
-            updated_at = NOW()
+        SET content = ?, updated_at = NOW()
         WHERE todo_id = ?
         AND user_id = ?
     `;
@@ -234,5 +190,4 @@ exports.updateTodo = (req, res) => {
 
         res.redirect(req.get('Referer'));
     });
-
 };

@@ -1,131 +1,128 @@
 body {
-    font-family: Arial, sans-serif;
-    background-color: #eef1f5;
     margin: 0;
     padding: 0;
+    background: #f5f6fa;
+    font-family: Arial, sans-serif;
 }
 
-.container {
-    width: 800px;
-    margin: 40px auto;
-}
-
-/* 상단 */
-.header {
+/* navbar */
+.navbar {
     display: flex;
-    justify-content: space-between;
+    justify-content: center;   /* 핵심: 전체 중앙 */
     align-items: center;
-}
-
-.home-btn {
-    text-decoration: none;
-    font-size: 14px;
-    color: #3498db;
-}
-
-/* 작성 폼 */
-.write-form {
     background: white;
-    padding: 20px;
-    border-radius: 10px;
-    margin-top: 15px;
-    box-shadow: 0 3px 10px rgba(0,0,0,0.05);
+    padding: 15px 30px;
+    border-bottom: 1px solid #ddd;
+    position: relative;
 }
 
-.write-form input,
-.write-form textarea,
-.write-form select {
-    width: 100%;
-    margin-bottom: 10px;
-    padding: 10px;
-    border-radius: 6px;
-    border: 1px solid #ddd;
-    font-size: 14px;
-}
-
-.write-form textarea {
-    height: 100px;
-    resize: none;
-}
-
-.form-row {
+/* 메뉴 중앙 */
+.center-menu {
     display: flex;
-    gap: 10px;
+    gap: 20px;
 }
 
-.form-row input {
-    flex: 1;
+/* 메뉴 링크 */
+.menu a {
+    text-decoration: none;
+    color: #444;
+    font-weight: 500;
 }
 
-.form-row select {
-    width: 150px;
+.menu a:hover {
+    color: #4a90e2;
 }
 
-.write-form button {
-    width: 100%;
-    padding: 10px;
-    background: #9b59b6;
+/* user 메뉴 오른쪽 고정 */
+.user-menu {
+    position: absolute;
+    right: 20px;
+}
+
+.user-menu a {
+    margin-left: 10px;
+    text-decoration: none;
+    color: #333;
+}
+
+/* container */
+.container {
+    width: 80%;
+    margin: 30px auto;
+}
+
+/* header */
+.header {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+/* 글 작성 버튼 */
+.write-btn-box {
+    margin: 20px 0;
+    text-align: right;
+}
+
+.write-btn {
+    background: #4a90e2;
     color: white;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
+    padding: 10px 20px;
+    border-radius: 5px;
+    text-decoration: none;
 }
 
-.write-form button:hover {
-    background: #8e44ad;
-}
-
-/* 목록 */
-.list {
-    margin-top: 20px;
-}
-
+/* 게시글 */
 .log-box {
     background: white;
+    margin-bottom: 15px;
     padding: 15px;
     border-radius: 10px;
-    margin-bottom: 12px;
-    box-shadow: 0 3px 10px rgba(0,0,0,0.05);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
 }
 
-/* 제목 + 시간 */
 .top {
     display: flex;
     justify-content: space-between;
-    align-items: center;
 }
 
-.time {
-    font-size: 13px;
-    color: gray;
+.title-link {
+    text-decoration: none;
+    color: black;
 }
 
-/* 내용 */
-.content {
-    margin: 10px 0;
+.title-link:hover {
+    color: #4a90e2;
 }
 
-/* 하단 */
 .bottom {
     display: flex;
-    justify-content: space-between;
-    font-size: 12px;
-    color: gray;
+    gap: 15px;
+    font-size: 14px;
+    color: #666;
 }
 
-/* 빈 상태 */
-.empty {
-    text-align: center;
-    color: gray;
+/* pagination */
+.pagination {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 30px;
 }
 
-.writer {
-    font-size: 13px;
-    color: gray;
-}
-
-.disabled-user{
-    color: gray;
-    cursor: not-allowed;
+.pagination a {
+    padding: 8px 12px;
+    border: 1px solid #ccc;
     text-decoration: none;
+    color: black;
+    border-radius: 5px;
+}
+
+.pagination a:hover {
+    background: #4a90e2;
+    color: white;
+}
+
+.pagination .active {
+    background: #4a90e2;
+    color: white;
 }

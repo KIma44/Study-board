@@ -4,16 +4,26 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>로그인</title>
-<link rel="stylesheet" href="/auth.css">
+    <link rel="stylesheet" href="/auth.css">
+</head>
+<body>
 
 <form class="auth-box" action="/login" method="POST">
+
     <h2>로그인</h2>
 
     <input type="email" name="email" placeholder="이메일" required>
+
     <input type="password" name="password" placeholder="비밀번호" required>
 
     <button type="submit" class="login-btn">로그인</button>
 
-    <p>계정이 없으신가요? <a href="/register">회원가입</a></p>
+    <p>
+        계정이 없으신가요?
+        <a href="/register">회원가입</a>
+    </p>
+
 </form>
+
+</body>
 </html>

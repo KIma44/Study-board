@@ -6,7 +6,6 @@
     <title>공지사항</title>
 
     <link rel="stylesheet" href="/notice.css">
-
 </head>
 <body>
 
@@ -14,31 +13,31 @@
 
     <div class="header">
 
-    <div class="header-left">
+        <div class="header-left">
 
-        <a href="/" class="back-btn">
-            ← 뒤로가기
-        </a>
+            <a href="/" class="back-btn">
+                ← 뒤로가기
+            </a>
 
-        <h1>📢 공지사항</h1>
+            <h1>📢 공지사항</h1>
+
+        </div>
+
+        <!-- JWT 관리자만 보이게 -->
+        <% if (typeof loginUser !== 'undefined' && loginUser && loginUser.role === 'admin') { %>
+
+            <a href="/notice/write" class="write-btn">
+                공지 작성
+            </a>
+
+        <% } %>
 
     </div>
-
-    <!-- 관리자만 보이게 -->
-    <% if (session.user && session.user.role === 'admin') { %>
-
-        <a href="/notice/write" class="write-btn">
-            공지 작성
-        </a>
-
-    <% } %>
-
-</div>
 
 
     <div class="notice-list">
 
-        <% if (notices.length === 0) { %>
+        <% if (!notices || notices.length === 0) { %>
 
             <div class="empty">
                 등록된 공지사항이 없습니다.
@@ -67,7 +66,7 @@
             </div>
 
             <span class="notice-date">
-                <%= new Date(notice.created_at).toLocaleString() %>
+                <%= new Date(notice.created_at).toLocaleString('ko-KR') %>
             </span>
 
         </div>

@@ -10,10 +10,12 @@
 <body>
 
 <%
-    const profileImage = user?.profile_image || '/uploads/default-profile.png';
+    const profileImage =
+        user && user.profile_image
+            ? user.profile_image
+            : '/uploads/default-profile.png';
 
     const email = user?.email || '';
-
     const nickName = user?.nickName || '';
 
     const createdAt = user?.created_at

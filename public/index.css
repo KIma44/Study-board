@@ -1,13 +1,16 @@
 /* 헤더 전체 */
 .header {
+    position: relative;
+}
+
+/* 메뉴를 헤더 기준 가운데 고정 */
+.nav-menu {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+
     display: flex;
-    justify-content: space-between;
-    align-items: center;
-
-    padding: 15px 30px;
-    background: #ffffff;
-
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    gap: 20px;
 }
 
 /* 로고 */
