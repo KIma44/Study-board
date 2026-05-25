@@ -303,12 +303,11 @@ exports.updatePost=(req,res)=>{
 
 
 // ======================
-// 삭제
+// 삭제 처리
 // ======================
-exports.deletePost=(req,res)=>{
+exports.deletePost = (req, res) => {
 
-    const postId =
-        req.params.id;
+    const postId = req.params.id;
 
     db.query(
         `
@@ -317,20 +316,37 @@ exports.deletePost=(req,res)=>{
         WHERE post_id=?
         `,
         [postId],
-        (err,result)=>{
+        (err, result) => {
 
-            if(err) throw err;
+            if (err) throw err;
 
-            if(
-                result[0].user_id
-                !==
-                req.user.user_id
-            ){
+            // 게시글 없을 때
+            if (result.length === 0) {
+                return res.send("<script>alert('게시글 없음');history.back();</script>");
+            }
 
-                return res.send(
-                    "<script>alert('권한 없음');history.back();</script>"
+            // 관리자면 무조건 허용
+            if (req.user.role === 'admin') {
+
+                return db.query(
+                    `
+                    DELETE
+                    FROM posts
+                    WHERE post_id=?
+                    `,
+                    [postId],
+                    (err) => {
+
+                        if (err) throw err;
+
+                        res.redirect('/');
+                    }
                 );
+            }
 
+            // 일반 유저는 본인 글만 삭제 가능
+            if (result[0].user_id !== req.user.user_id) {
+                return res.send("<script>alert('권한 없음');history.back();</script>");
             }
 
             db.query(
@@ -340,16 +356,13 @@ exports.deletePost=(req,res)=>{
                 WHERE post_id=?
                 `,
                 [postId],
-                (err)=>{
+                (err) => {
 
-                    if(err) throw err;
+                    if (err) throw err;
 
                     res.redirect('/');
-
                 }
             );
-
         }
     );
-
 };
