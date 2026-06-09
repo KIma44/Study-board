@@ -1,9 +1,7 @@
 const db = require('../config/db');
 
 
-// ========================
-// 📌 공부 기록 작성
-// ========================
+// 공부 기록 작성
 exports.createStudyLog = (req, res) => {
 
     const user_id = req.user.user_id;
@@ -55,37 +53,99 @@ exports.createStudyLog = (req, res) => {
 };
 
 
-// ========================
-// 📌 목록 조회 + 페이지
-// ========================
+
+// 목록 조회 + 검색 + 페이지
 exports.getStudyLogs = (req, res) => {
+
+    const type = req.query.type || 'all';
+    const keyword = req.query.keyword || '';
 
     const page = parseInt(req.query.page) || 1;
 
     const limit = 10;
     const offset = (page - 1) * limit;
 
-    // 전체 개수 조회
+    let whereSql = '';
+    let values = [];
+
+    // 검색
+    if (keyword) {
+
+        if (type === 'title') {
+
+            whereSql = `
+                WHERE study_logs.title LIKE ?
+            `;
+
+            values.push(`%${keyword}%`);
+
+        }
+
+        else if (type === 'content') {
+
+            whereSql = `
+                WHERE study_logs.content LIKE ?
+            `;
+
+            values.push(`%${keyword}%`);
+
+        }
+
+        else if (type === 'writer') {
+
+            whereSql = `
+                WHERE users.nickName LIKE ?
+            `;
+
+            values.push(`%${keyword}%`);
+
+        }
+
+        else {
+
+            whereSql = `
+                WHERE
+                study_logs.title LIKE ?
+                OR study_logs.content LIKE ?
+                OR users.nickName LIKE ?
+            `;
+
+            values.push(
+                `%${keyword}%`,
+                `%${keyword}%`,
+                `%${keyword}%`
+            );
+
+        }
+
+    }
+
+    // 전체 게시글 수
     const countSql = `
         SELECT COUNT(*) AS total
         FROM study_logs
+        JOIN users
+        ON study_logs.user_id = users.user_id
+        ${whereSql}
     `;
 
-    db.query(countSql, (err, countResult) => {
+    db.query(countSql, values, (err, countResult) => {
 
         if (err) throw err;
 
         const totalPosts = countResult[0].total;
+
         const totalPages = Math.ceil(
             totalPosts / limit
         );
 
-        // 현재 페이지 데이터만 가져오기
+        // 게시글 목록 조회
         const sql = `
             SELECT study_logs.*, users.nickName
             FROM study_logs
             JOIN users
-            ON study_logs.user_id=users.user_id
+            ON study_logs.user_id = users.user_id
+            ${whereSql}
             ORDER BY study_log_id DESC
             LIMIT ?
             OFFSET ?
@@ -93,19 +153,22 @@ exports.getStudyLogs = (req, res) => {
 
         db.query(
             sql,
-            [limit, offset],
+            [...values, limit, offset],
             (err, results) => {
 
-                if(err) throw err;
+                if (err) throw err;
 
                 res.render(
                     'study/study',
                     {
                         logs: results,
-                        loginUser:req.user || null,
+                        loginUser: req.user || null,
 
-                        currentPage:page,
-                        totalPages
+                        currentPage: page,
+                        totalPages,
+
+                        type,
+                        keyword
                     }
                 );
 
@@ -116,9 +179,8 @@ exports.getStudyLogs = (req, res) => {
 
 };
 
-// ========================
-// 📌 삭제
-// ========================
+
+//  삭제
 exports.deleteStudyLog = (req, res) => {
 
     const id = req.params.id;
@@ -157,9 +219,7 @@ exports.deleteStudyLog = (req, res) => {
 };
 
 
-// ========================
-// 📌 수정 페이지
-// ========================
+// 수정 페이지
 exports.getEditPage = (req, res) => {
 
     const id = req.params.id;
@@ -190,9 +250,7 @@ exports.getEditPage = (req, res) => {
 };
 
 
-// ========================
-// 📌 수정 처리
-// ========================
+//  수정 처리
 exports.updateStudyLog = (req, res) => {
 
     const id = req.params.id;
@@ -241,9 +299,8 @@ exports.updateStudyLog = (req, res) => {
 };
 
 
-// ========================
-// 📌 상세 보기
-// ========================
+
+// 상세 보기
 exports.getDetail = (req, res) => {
 
     const id = req.params.id;
@@ -278,9 +335,8 @@ exports.getDetail = (req, res) => {
 };
 
 
-// ========================
-// 📌 작성 페이지
-// ========================
+
+//  작성 페이지
 exports.getWritePage = (req, res) => {
 
     if (!req.user) {

@@ -2,7 +2,7 @@ const db = require('../config/db');
 
 
 // ========================
-// 📌 특정 공부 TODO
+//  특정 공부 TODO
 // ========================
 exports.getTodo = (req, res) => {
 
@@ -47,9 +47,8 @@ exports.getTodo = (req, res) => {
 };
 
 
-// ========================
-// 📌 전체 TODO
-// ========================
+
+//  전체 TODO
 exports.getAllTodo = (req, res) => {
 
     const userId = req.user.user_id;
@@ -85,9 +84,8 @@ exports.getAllTodo = (req, res) => {
 };
 
 
-// ========================
-// 📌 TODO 추가
-// ========================
+// TODO 추가
+
 exports.addTodo = (req, res) => {
 
     const { content, study_log_id } = req.body;
@@ -111,9 +109,8 @@ exports.addTodo = (req, res) => {
 };
 
 
-// ========================
-// 📌 TODO 완료 토글
-// ========================
+
+//  TODO 완료 토글
 exports.toggleTodo = (req, res) => {
 
     const id = req.params.id;
@@ -139,9 +136,8 @@ exports.toggleTodo = (req, res) => {
 };
 
 
-// ========================
-// 📌 삭제
-// ========================
+
+//  삭제
 exports.deleteTodo = (req, res) => {
 
     const id = req.params.id;
@@ -165,9 +161,7 @@ exports.deleteTodo = (req, res) => {
 };
 
 
-// ========================
-// 📌 수정
-// ========================
+//  수정
 exports.updateTodo = (req, res) => {
 
     const id = req.params.id;

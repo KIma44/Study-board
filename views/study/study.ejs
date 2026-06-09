@@ -51,14 +51,55 @@
 <div class="container">
 
     <div class="header">
-        <h1>📘 공부 기록 게시판</h1>
-    </div>
+    <h1>📘 공부 기록 게시판</h1>
+</div>
 
-    <% if (loginUser) { %>
-    <div class="write-btn-box">
-        <a href="/study/write" class="write-btn">✏ 글 작성</a>
-    </div>
-    <% } %>
+<!-- 검색창 -->
+<form action="/study" method="GET" class="search-form">
+
+    <select name="type">
+
+        <option value="all"
+            <%= type === 'all' ? 'selected' : '' %>>
+            전체
+        </option>
+
+        <option value="title"
+            <%= type === 'title' ? 'selected' : '' %>>
+            제목
+        </option>
+
+        <option value="content"
+            <%= type === 'content' ? 'selected' : '' %>>
+            내용
+        </option>
+
+        <option value="writer"
+            <%= type === 'writer' ? 'selected' : '' %>>
+            작성자
+        </option>
+
+    </select>
+
+    <input
+        type="text"
+        name="keyword"
+        value="<%= keyword || '' %>"
+        placeholder="검색어 입력"
+    >
+
+
+    <button type="submit" class="search-btn">
+        🔍 검색
+    </button>
+
+</form>
+
+<% if (loginUser) { %>
+<div class="write-btn-box">
+    <a href="/study/write" class="write-btn">✏ 글 작성</a>
+</div>
+<% } %>
 
     <hr>
 

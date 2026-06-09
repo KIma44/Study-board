@@ -1,9 +1,7 @@
 const db = require('../config/db');
 
 
-// ======================
 // 게시글 목록 + 검색 + 페이지
-// ======================
 exports.getMain = (req, res) => {
 
     const type = req.query.type || 'all';
@@ -114,10 +112,7 @@ exports.getMain = (req, res) => {
 
 };
 
-
-// ======================
 // 글 작성 페이지
-// ======================
 exports.getWrite=(req,res)=>{
 
     res.render('write');
@@ -125,9 +120,7 @@ exports.getWrite=(req,res)=>{
 };
 
 
-// ======================
 // 글 작성 처리
-// ======================
 exports.createPost = (req, res) => {
 
     // 로그인 체크
@@ -165,60 +158,71 @@ exports.createPost = (req, res) => {
 };
 
 
-// ======================
 // 게시글 상세
-// ======================
 exports.getPostDetail = (req, res) => {
 
     const postId = req.params.id;
 
-    const postSql = `
-        SELECT p.*, u.nickName
-        FROM posts p
-        JOIN users u
-        ON p.user_id = u.user_id
-        WHERE p.post_id = ?
-    `;
-
-    const commentSql = `
-        SELECT c.*, u.nickName
-        FROM comments c
-        JOIN users u
-        ON c.user_id = u.user_id
-        WHERE c.post_id = ?
-        ORDER BY c.comment_id DESC
-    `;
-
-    db.query(postSql, [postId], (err, postResult) => {
-
-        if (err) throw err;
-
-        if (postResult.length === 0) {
-            return res.send("게시글 없음");
-        }
-
-        db.query(commentSql, [postId], (err, commentResult) => {
+    // 조회수 증가
+    db.query(
+        `
+        UPDATE posts
+        SET views = views + 1
+        WHERE post_id = ?
+        `,
+        [postId],
+        (err) => {
 
             if (err) throw err;
 
-            res.render(
-                'detail',
-                {
-                    post: postResult[0],
-                    comments: commentResult,
-                    loginUser: req.user || null
+            const postSql = `
+                SELECT p.*, u.nickName
+                FROM posts p
+                JOIN users u
+                ON p.user_id = u.user_id
+                WHERE p.post_id = ?
+            `;
+
+            const commentSql = `
+                SELECT c.*, u.nickName
+                FROM comments c
+                JOIN users u
+                ON c.user_id = u.user_id
+                WHERE c.post_id = ?
+                ORDER BY c.comment_id DESC
+            `;
+
+            db.query(postSql, [postId], (err, postResult) => {
+
+                if (err) throw err;
+
+                if (postResult.length === 0) {
+                    return res.send("게시글 없음");
                 }
-            );
 
-        });
+                db.query(commentSql, [postId], (err, commentResult) => {
 
-    });
+                    if (err) throw err;
+
+                    res.render(
+                        'detail',
+                        {
+                            post: postResult[0],
+                            comments: commentResult,
+                            loginUser: req.user || null
+                        }
+                    );
+
+                });
+
+            });
+
+        }
+    );
 
 };
 
-// ======================
 // 수정 페이지
-// ======================
 exports.getEditPost=(req,res)=>{
 
     const postId =
@@ -260,9 +264,8 @@ exports.getEditPost=(req,res)=>{
 };
 
 
-// ======================
 // 수정 처리
-// ======================
+
 exports.updatePost=(req,res)=>{
 
     const postId =
@@ -302,9 +305,8 @@ exports.updatePost=(req,res)=>{
 };
 
 
-// ======================
 // 삭제 처리
-// ======================
+
 exports.deletePost = (req, res) => {
 
     const postId = req.params.id;
