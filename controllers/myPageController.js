@@ -44,12 +44,17 @@ exports.getMyPage = (req, res) => {
         if (err) throw err;
 
         posts.forEach(post => {
-            if (post.type === 'free') {
-                post.url = '/post/' + post.id;
-            } else {
-                post.url = '/study/' + post.id;
-            }
-        });
+
+    if (post.type === 'free') {
+
+        post.url = '/post/' + post.id;
+
+    } else if (post.type === 'study') {
+
+        post.url = '/study/detail/' + post.id;
+    }
+
+});
 
         const freeCount =
             posts.filter(post => post.type === 'free').length;
@@ -57,26 +62,47 @@ exports.getMyPage = (req, res) => {
         const studyCount =
             posts.filter(post => post.type === 'study').length;
 
-        const todoSql = `
-        SELECT COUNT(*) AS count
-        FROM todos
-        WHERE user_id = ?
-        `;
+        const todoCountSql = `
+SELECT COUNT(*) AS count
+FROM todos
+WHERE user_id = ?
+`;
 
-        db.query(todoSql, [userId], (err, todoResult) => {
+db.query(todoCountSql, [userId], (err, todoResult) => {
 
-            if (err) throw err;
+    if (err) throw err;
 
-            const todoCount = todoResult[0].count;
+    const todoCount = todoResult[0].count;
 
-            res.render('my/myPage', {
-                user,
-                posts,
-                freeCount,
-                studyCount,
-                todoCount,
-                loginUser: req.user
-            });
+    db.query(
+    `
+    SELECT *
+    FROM todos
+    WHERE user_id = ?
+    ORDER BY created_at DESC
+    LIMIT 5
+    `,
+    [userId],
+    (err, todos) => {
+
+        if (err) throw err;
+
+        todos.forEach(todo => {
+            todo.url = '/todo';
         });
-    });
-};
+
+        res.render('my/myPage', {
+            user,
+            posts,
+            freeCount,
+            studyCount,
+            todoCount,
+            todos,
+            loginUser: req.user
+        });
+
+    }
+);
+});
+}); 
+}; 
